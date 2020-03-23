@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Кости</string>
+    <string name="players_list">Список игроков</string>
+    <string name="clear">Очистить</string>
+    <string name="input_name">Введите имя</string>
+    <string name="add">Добавить</string>
+    <string name="ok">ОК</string>
+    <string name="name_cannot_be_empty">Имя не может быть пустым</string>
+    <string name="cancel">Отмена</string>
+</resources>

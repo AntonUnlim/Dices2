@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".KeyboardActivity"
+    android:padding="@dimen/main_padding">
+
+    <TextView
+        android:id="@+id/tv_keyboard_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/keyboard_font_size"
+        android:textColor="@color/keyboardTitle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Покер"/>
+
+    <TextView
+        android:id="@+id/tv_keyboard_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/keyboard_font_size"
+        android:textColor="@color/keyboardResult"
+        app:layout_constraintTop_toBottomOf="@id/tv_keyboard_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="55"/>
+
+    <TextView
+        android:id="@+id/b_1"
+        android:text="1"
+        style="@style/KeyboardButton"
+        app:layout_constraintTop_toBottomOf="@id/tv_keyboard_result"
+        app:layout_constraintBottom_toTopOf="@id/b_4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/b_2"/>
+
+    <TextView
+        android:id="@+id/b_2"
+        android:text="2"
+        style="@style/KeyboardButton"
+        app:layout_constraintTop_toBottomOf="@id/tv_keyboard_result"
+        app:layout_constraintBottom_toTopOf="@id/b_5"
+        app:layout_constraintStart_toEndOf="@id/b_1"
+        app:layout_constraintEnd_toStartOf="@id/b_3"/>
+
+    <TextView
+        android:id="@+id/b_3"
+        style="@style/KeyboardButton"
+        android:text="3"
+        app:layout_constraintTop_toBottomOf="@id/tv_keyboard_result"
+        app:layout_constraintBottom_toTopOf="@id/b_6"
+        app:layout_constraintStart_toEndOf="@id/b_2"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/b_4"
+        style="@style/KeyboardButton"
+        android:text="4"
+        app:layout_constraintTop_toBottomOf="@id/b_1"
+        app:layout_constraintBottom_toTopOf="@id/b_7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/b_5"/>
+
+    <TextView
+        android:id="@+id/b_5"
+        style="@style/KeyboardButton"
+        android:text="5"
+        app:layout_constraintTop_toBottomOf="@id/b_2"
+        app:layout_constraintBottom_toTopOf="@id/b_8"
+        app:layout_constraintStart_toEndOf="@id/b_4"
+        app:layout_constraintEnd_toStartOf="@id/b_6"/>
+
+    <TextView
+        android:id="@+id/b_6"
+        style="@style/KeyboardButton"
+        android:text="6"
+        app:layout_constraintTop_toBottomOf="@id/b_3"
+        app:layout_constraintBottom_toTopOf="@id/b_9"
+        app:layout_constraintStart_toEndOf="@id/b_5"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/b_7"
+        style="@style/KeyboardButton"
+        android:text="7"
+        app:layout_constraintTop_toBottomOf="@id/b_4"
+        app:layout_constraintBottom_toTopOf="@id/b_minus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/b_8"/>
+
+    <TextView
+        android:id="@+id/b_8"
+        style="@style/KeyboardButton"
+        android:text="8"
+        app:layout_constraintTop_toBottomOf="@id/b_5"
+        app:layout_constraintBottom_toTopOf="@id/b_0"
+        app:layout_constraintStart_toEndOf="@id/b_7"
+        app:layout_constraintEnd_toStartOf="@id/b_9"/>
+
+    <TextView
+        android:id="@+id/b_9"
+        style="@style/KeyboardButton"
+        android:text="9"
+        app:layout_constraintTop_toBottomOf="@id/b_6"
+        app:layout_constraintBottom_toTopOf="@id/b_plus"
+        app:layout_constraintStart_toEndOf="@id/b_8"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/b_minus"
+        style="@style/KeyboardButton"
+        android:text="-"
+        app:layout_constraintTop_toBottomOf="@id/b_7"
+        app:layout_constraintBottom_toTopOf="@id/b_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/b_0"/>
+
+    <TextView
+        android:id="@+id/b_0"
+        style="@style/KeyboardButton"
+        android:text="0"
+        app:layout_constraintTop_toBottomOf="@id/b_8"
+        app:layout_constraintBottom_toTopOf="@id/b_ok"
+        app:layout_constraintStart_toEndOf="@id/b_minus"
+        app:layout_constraintEnd_toStartOf="@id/b_plus"/>
+
+    <TextView
+        android:id="@+id/b_plus"
+        style="@style/KeyboardButton"
+        android:text="+"
+        app:layout_constraintTop_toBottomOf="@id/b_9"
+        app:layout_constraintBottom_toTopOf="@id/b_ok"
+        app:layout_constraintStart_toEndOf="@id/b_0"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/b_cancel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/cancel"
+        android:textSize="@dimen/main_font_size"
+        app:layout_constraintTop_toBottomOf="@id/b_minus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/b_minus"
+        android:layout_marginRight="@dimen/main_padding"
+        android:layout_marginEnd="@dimen/main_padding"
+        android:onClick="onCancelClicked"/>
+
+    <Button
+        android:id="@+id/b_ok"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/ok"
+        android:textSize="@dimen/main_font_size"
+        app:layout_constraintTop_toBottomOf="@id/b_0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/b_0"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="onOkClicked"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
