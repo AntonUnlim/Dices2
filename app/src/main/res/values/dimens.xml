@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="main_padding">16dp</dimen>
+    <!--Fonts-->
+    <dimen name="main_table_font_size">16sp</dimen>
     <dimen name="main_font_size">32sp</dimen>
     <dimen name="keyboard_font_size">64sp</dimen>
 </resources>

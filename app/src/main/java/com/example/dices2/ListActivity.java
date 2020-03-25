@@ -12,13 +12,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
     private Game game;
-    private EditText etPlayerName;
-    private ListView lvPlayers;
-    ArrayAdapter<String> adapter;
+    private EditText editTextPlayerName;
+    private ListView listViewPlayers;
+    ArrayAdapter<String> stringArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,65 +30,73 @@ public class ListActivity extends AppCompatActivity {
         game.setListActivity(this);
     }
 
-    public void fillListView(List<String> players) {
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, players);
-        lvPlayers.setAdapter(adapter);
-        lvPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+    public void fillListView(final List<Player> players) {
+        stringArrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, playersToString(players));
+        listViewPlayers.setAdapter(stringArrayAdapter);
+        listViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                AlertDialog.Builder adb=new AlertDialog.Builder(ListActivity.this);
-                adb.setTitle("Удаление");
-                adb.setMessage("Вы уверены, что хотите удалить " + game.getPlayerNameByPosition(position) + "?");
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ListActivity.this);
+                alertDialogBuilder.setTitle("Удаление");
+                alertDialogBuilder.setMessage("Вы уверены, что хотите удалить " + game.getNameOfPlayerByPosition(position) + "?");
                 final int positionToRemove = position;
-                adb.setNegativeButton("Нет", null);
-                adb.setPositiveButton("Да", new AlertDialog.OnClickListener() {
+                alertDialogBuilder.setNegativeButton("Нет", null);
+                alertDialogBuilder.setPositiveButton("Да", new AlertDialog.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        game.deletePlayerFromList(positionToRemove);
-                        refreshListView();
+                        game.removePlayer(positionToRemove);
                     }});
-                adb.show();
+                alertDialogBuilder.show();
             }
         });
     }
 
-    public void refreshListView() {
-        adapter.notifyDataSetChanged();
+    public void refreshListView(List<Player> players) {
+        stringArrayAdapter.clear();
+        stringArrayAdapter.addAll(playersToString(players));
+        stringArrayAdapter.notifyDataSetChanged();
     }
 
     public void addButtonClicked(View view) {
-        String playerName = etPlayerName.getText().toString();
+        String playerName = editTextPlayerName.getText().toString();
         if (playerName.equals("")) {
             showToast(getString(R.string.name_cannot_be_empty));
         } else {
-            game.onAddButtonClicked(playerName);
-            etPlayerName.setText("");
+            game.addPlayer(playerName);
+            editTextPlayerName.setText("");
         }
     }
 
     public void clearButtonClicked(View view) {
-        AlertDialog.Builder adb=new AlertDialog.Builder(ListActivity.this);
-        adb.setTitle("Очистить список");
-        adb.setMessage("Вы уверены, что хотите очистить список игроков?");
-        adb.setNegativeButton("Нет", null);
-        adb.setPositiveButton("Да", new AlertDialog.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ListActivity.this);
+        alertDialogBuilder.setTitle("Очистить список");
+        alertDialogBuilder.setMessage("Вы уверены, что хотите очистить список игроков?");
+        alertDialogBuilder.setNegativeButton("Нет", null);
+        alertDialogBuilder.setPositiveButton("Да", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 game.clearListOfPlayers();
-                refreshListView();
             }});
-        adb.show();
+        alertDialogBuilder.show();
     }
 
-    public void okButtonClicked(View view) {
-        game.okButtonClicked();
+    public void startGameButtonClicked(View view) {
+        game.startGameButtonClicked();
         finish();
     }
 
-    public void showToast(String message) {
+    private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private List<String> playersToString(List<Player> players) {
+        List<String> result = new ArrayList<>();
+        for (Player player : players) {
+            result.add(player.getName());
+        }
+        return result;
+    }
+
     private void init() {
-        etPlayerName = findViewById(R.id.et_player_name);
-        lvPlayers = findViewById(R.id.lv_players);
+        editTextPlayerName = findViewById(R.id.et_player_name);
+        listViewPlayers = findViewById(R.id.lv_players);
     }
 }

@@ -11,13 +11,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
 
-import java.util.Date;
 import java.util.List;
+
+import static com.example.dices2.Consts.*;
 
 public class MainActivity extends AppCompatActivity {
     private Game game;
-    private TableLayout tlMain;
+    private TableLayout tableLayoutMain;
     private GameTable gameTable;
+
+    // TODO поиграться с цветами
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,38 +49,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void init() {
-        tlMain = findViewById(R.id.tl_main);
-    }
-
-    public void fillMainTable(List<String> players) {
-        gameTable = new GameTable(this, tlMain);
-        gameTable.fillTable(players);
-    }
-
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data ) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data == null) return;
-        String value = data.getStringExtra("result_value");
-        //Cell cell = (Cell)data.getSerializableExtra("result_cell");
-        game.setCurButtonText(value);
+        String value = data.getStringExtra(INTENT_INPUT_VALUE);
+        game.setTextToCurrentTextView(value);
+        game.makeMove(value);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK)
         {
-            AlertDialog.Builder adb=new AlertDialog.Builder(MainActivity.this);
-            adb.setTitle("Выход");
-            adb.setMessage("Вы уверены, что хотите выйти?");
-            adb.setNegativeButton("Нет", null);
-            adb.setPositiveButton("Да", new AlertDialog.OnClickListener() {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setTitle("Выход");
+            alertDialogBuilder.setMessage("Вы уверены, что хотите выйти?");
+            alertDialogBuilder.setNegativeButton("Нет", null);
+            alertDialogBuilder.setPositiveButton("Да", new AlertDialog.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
                 }});
-            adb.show();
+            alertDialogBuilder.show();
         }
         return false;
+    }
+
+    public void fillMainTable(List<Player> players) {
+        gameTable = new GameTable(this, tableLayoutMain);
+        gameTable.fillTable(players);
+    }
+
+    public void showSchool(Player player) {
+        gameTable.setSchoolValue(player);
+    }
+
+    public void showTotal(Player player) {
+        gameTable.setTotalValue(player);
+    }
+
+    private void init() {
+        tableLayoutMain = findViewById(R.id.tl_main);
     }
 }

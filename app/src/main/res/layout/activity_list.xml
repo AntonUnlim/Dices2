@@ -56,11 +56,11 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/b_ok" />
+        app:layout_constraintEnd_toStartOf="@id/b_save" />
 
     <Button
-        android:id="@+id/b_ok"
-        android:onClick="okButtonClicked"
+        android:id="@+id/b_save"
+        android:onClick="startGameButtonClicked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ok"

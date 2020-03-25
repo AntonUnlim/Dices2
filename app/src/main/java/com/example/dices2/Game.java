@@ -1,8 +1,6 @@
 package com.example.dices2;
 
-import android.widget.Button;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +9,20 @@ public class Game {
     private static Game instance;
     private MainActivity mainActivity;
     private ListActivity listActivity;
-    private List<String> listOfPlayers  = new ArrayList<>();
-    private Button curButton;
+    private List<Player> players;
+    private TextView currentTextView;
+    // TODO добавить галочку
+    private boolean isCountTotalEveryMove = false;
+    private int totalNumberOfMoves;
+    // TODO добавить другие виды правил игры
+    private int totalNumberOfRows = 16;
 
-
-    private Game() {}
+    private Game() {
+        players = new ArrayList<>();
+        players.add(new Player("Test 1"));
+        //playerList.add(new Player("Test 2"));
+        //playerList.add(new Player("Test 3"));
+    }
 
     public static Game getInstance() {
         if (instance == null) {
@@ -24,10 +31,49 @@ public class Game {
         return instance;
     }
 
+    // Ход игры
+
+    private void startGame() {
+        getTotalNumberOfMoves();
+        mainActivity.fillMainTable(players);
+    }
+
+    public void makeMove(String value) {
+        Cell cell = (Cell) currentTextView.getTag();
+        Player player = cell.getPlayer();
+        String rowName = cell.getRow();
+        player.setValue(rowName, value);
+        showSchool(player);
+        totalNumberOfMoves--;
+        if (isCountTotalEveryMove || isGameOver()) {
+            showTotal(player);
+        }
+    }
+
+    // Работа с MainActivity
+
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
-        mainActivity.fillMainTable(listOfPlayers);
+        mainActivity.fillMainTable(players);
     }
+
+    public void setCurrentTextView(TextView textView) {
+        this.currentTextView = textView;
+    }
+
+    public void setTextToCurrentTextView(String value) {
+        currentTextView.setText(value);
+    }
+
+    private void showSchool(Player player) {
+        mainActivity.showSchool(player);
+    }
+
+    private void showTotal(Player player) {
+        mainActivity.showTotal(player);
+    }
+
+    // Работа с ListActivity
 
     public void setListActivity(ListActivity listActivity) {
         this.listActivity = listActivity;
@@ -35,35 +81,39 @@ public class Game {
     }
 
     private void fillListView() {
-        listActivity.fillListView(listOfPlayers);
+        listActivity.fillListView(players);
     }
 
-    public void onAddButtonClicked(String playerName) {
-        listOfPlayers.add(playerName);
-        listActivity.refreshListView();
+    public void addPlayer(String nameOfPlayer) {
+        players.add(new Player(nameOfPlayer));
+        listActivity.refreshListView(players);
     }
 
-    public String getPlayerNameByPosition(int position) {
-        return listOfPlayers.get(position);
-    }
-
-    public void deletePlayerFromList(int position) {
-        listOfPlayers.remove(position);
+    public void removePlayer(int position) {
+        players.remove(position);
+        listActivity.refreshListView(players);
     }
 
     public void clearListOfPlayers() {
-        listOfPlayers.clear();
+        players.clear();
+        listActivity.refreshListView(players);
     }
 
-    public void okButtonClicked() {
-        mainActivity.fillMainTable(listOfPlayers);
+    public String getNameOfPlayerByPosition(int position) {
+        return players.get(position).getName();
     }
 
-    public void setCurButton(Button button) {
-        this.curButton = button;
+    public void startGameButtonClicked() {
+        startGame();
     }
 
-    public void setCurButtonText(String value) {
-        curButton.setText(value);
+    // Прочее
+
+    private boolean isGameOver() {
+        return totalNumberOfMoves < 0;
+    }
+
+    private int getTotalNumberOfMoves() {
+        return totalNumberOfMoves = players.size() * totalNumberOfRows;
     }
 }
