@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/main_padding"
+    tools:context=".SettingsActivity"
+    android:background="@color/colorBackgroundDark">
+
+    <TextView
+        android:id="@+id/tv_settings_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/game_settings"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/is_count_total_every_move"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/is_count_total_every_move"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/count_total_every_move"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_settings_title"
+        tools:layout_editor_absoluteY="188dp"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/settings_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onSettingsCancelButtonClicked"
+        app:layout_constraintTop_toBottomOf="@id/is_count_total_every_move"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settings_save_button"
+        android:text="@string/cancel"/>
+    <Button
+        android:id="@+id/settings_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onSettingsSaveButtonClicked"
+        app:layout_constraintTop_toBottomOf="@id/is_count_total_every_move"
+        app:layout_constraintStart_toEndOf="@id/settings_cancel_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/save"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ public class KeyboardActivity extends AppCompatActivity {
     private TextView textViewResult;
     private Button buttonSave;
     private String result = "";
+    private boolean isEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,12 @@ public class KeyboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_keyboard);
         init();
         String rowName = getIntent().getStringExtra(INTENT_ROW_NAME);
+        isEdit = getIntent().getBooleanExtra(INTENT_IS_EDIT, false);
         textViewTitle.setText(rowName);
+        if (isEdit) {
+            result = getIntent().getStringExtra(INTENT_EDITED_VALUE);
+            textViewResult.setText(result);
+        }
     }
 
     public void onKeyboardButtonClicked(View v) {
@@ -57,6 +63,7 @@ public class KeyboardActivity extends AppCompatActivity {
     public void onSaveButtonClicked(View view) {
         Intent intent = new Intent();
         intent.putExtra(Consts.INTENT_INPUT_VALUE, result);
+        intent.putExtra(INTENT_IS_EDIT, isEdit);
         setResult(RESULT_OK, intent);
         finish();
     }

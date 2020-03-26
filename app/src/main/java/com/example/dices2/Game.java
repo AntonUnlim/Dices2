@@ -1,5 +1,6 @@
 package com.example.dices2;
 
+import android.graphics.Color;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,10 +17,11 @@ public class Game {
     private int totalNumberOfMoves;
     // TODO добавить другие виды правил игры
     private int totalNumberOfRows = 16;
+    private int idCurrentPlayer = 0;
 
     private Game() {
         players = new ArrayList<>();
-        players.add(new Player("Test 1"));
+        //players.add(new Player("Test 1"));
         //playerList.add(new Player("Test 2"));
         //playerList.add(new Player("Test 3"));
     }
@@ -36,18 +38,30 @@ public class Game {
     private void startGame() {
         getTotalNumberOfMoves();
         mainActivity.fillMainTable(players);
+        highlightNextPlayer();
     }
 
-    public void makeMove(String value) {
+    private void highlightNextPlayer() {
+        if (idCurrentPlayer > players.size()-1) {
+            idCurrentPlayer = 0;
+        }
+        mainActivity.highlightPlayerName(players.get(idCurrentPlayer++));
+    }
+
+    public void makeMove(String value, boolean isEdit) {
         Cell cell = (Cell) currentTextView.getTag();
         Player player = cell.getPlayer();
         String rowName = cell.getRow();
         player.setValue(rowName, value);
         showSchool(player);
-        totalNumberOfMoves--;
+        if (!isEdit) {
+            totalNumberOfMoves--;
+            highlightNextPlayer();
+        }
         if (isCountTotalEveryMove || isGameOver()) {
             showTotal(player);
         }
+        mainActivity.setCurrentTextViewBackground(currentTextView);
     }
 
     // Работа с MainActivity
@@ -110,10 +124,24 @@ public class Game {
     // Прочее
 
     private boolean isGameOver() {
-        return totalNumberOfMoves < 0;
+        return totalNumberOfMoves <= 0;
     }
 
     private int getTotalNumberOfMoves() {
         return totalNumberOfMoves = players.size() * totalNumberOfRows;
+    }
+
+    public void onEditMenuClicked() {
+        Cell cell = (Cell) currentTextView.getTag();
+        String rowName = cell.getRow();
+        mainActivity.startKeyboardActivityForEdit(currentTextView.getText().toString(), rowName);
+    }
+
+    public void setCountTotalEveryMove(boolean countTotalEveryMove) {
+        isCountTotalEveryMove = countTotalEveryMove;
+    }
+
+    public boolean isCountTotalEveryMove() {
+        return isCountTotalEveryMove;
     }
 }

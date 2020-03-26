@@ -6,10 +6,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TableLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -19,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Game game;
     private TableLayout tableLayoutMain;
     private GameTable gameTable;
+    private final int MENU_EDIT = 1;
 
     // TODO поиграться с цветами
 
@@ -54,8 +59,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (data == null) return;
         String value = data.getStringExtra(INTENT_INPUT_VALUE);
+        boolean isEdit = data.getBooleanExtra(INTENT_IS_EDIT, false);
         game.setTextToCurrentTextView(value);
-        game.makeMove(value);
+        game.makeMove(value, isEdit);
     }
 
     @Override
@@ -90,5 +96,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         tableLayoutMain = findViewById(R.id.tl_main);
+    }
+
+    public void setCurrentTextViewBackground(TextView currentTextView) {
+        currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_light_gray));
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo info) {
+        if (!((TextView)view).getText().equals("")) {
+            menu.add(0, MENU_EDIT, 0, "Редактировать");
+            game.setCurrentTextView((TextView)view);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_EDIT) {
+            game.onEditMenuClicked();
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    public void startKeyboardActivityForEdit(String editedValue, String rowName) {
+        Intent intent = new Intent(this, KeyboardActivity.class);
+        intent.putExtra(INTENT_EDITED_VALUE, editedValue);
+        intent.putExtra(INTENT_ROW_NAME, rowName);
+        intent.putExtra(INTENT_IS_EDIT, true);
+        startActivityForResult(intent, 1);
+    }
+
+    public void highlightPlayerName(Player player) {
+        gameTable.highlightPlayerName(player);
     }
 }

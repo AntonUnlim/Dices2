@@ -8,8 +8,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +23,12 @@ public class GameTable {
     private Map<String, Integer> rowsNamesMap;
     private Map<String, Integer> playersNamesMap;
     private Game game;
-    private final int TEXT_HEIGHT = 64;
+    private final int TEXT_HEIGHT = 48;
     private final int SEPARATOR_HEIGHT = 10;
     private Map<String, TextView> schoolTextViewsMap;
     private Map<String, TextView> totalTextViewsMap;
+    private Map<String, TextView> namesTextViewMap;
+    private Map<String, List<TextView>> playersTextViewsMap;
     private List<Player> players;
     private int fontColor = Color.WHITE;
 
@@ -40,6 +41,8 @@ public class GameTable {
         game = Game.getInstance();
         schoolTextViewsMap = new HashMap<>();
         totalTextViewsMap = new HashMap<>();
+        namesTextViewMap = new HashMap<>();
+        playersTextViewsMap = new HashMap<>();
     }
 
     public void fillTable(List<Player> players) {
@@ -60,16 +63,11 @@ public class GameTable {
                     nameTextView.setText(player.getName());
                     nameTextView.setGravity(Gravity.CENTER_HORIZONTAL);
                     tableRow.addView(nameTextView);
+                    namesTextViewMap.put(player.getName(), nameTextView);
                 }
             } else if (rowName.equals(SEPARATOR)) {
                 textView.setHeight(SEPARATOR_HEIGHT);
                 tableRow.addView(textView);
-            } else if (rowName.equals(TRIANGLE)) {
-                textView.setCompoundDrawablesWithIntrinsicBounds(mainActivity.getResources().getDrawable(R.drawable.triangle_24dp), null, null, null);
-                textView.setHeight(TEXT_HEIGHT);
-                textView.setGravity(Gravity.CENTER_VERTICAL);
-                tableRow.addView(textView);
-                fillRowWithTextViews(tableRow, rowName);
             } else {
                 textView.setTextSize(mainActivity.getResources().getDimension(R.dimen.main_table_font_size));
                 textView.setTextColor(fontColor);
@@ -101,23 +99,14 @@ public class GameTable {
         TextView result = new TextView(mainActivity);
         result.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_dark_gray));
         if (!Arrays.asList(namesOfUnclickableRows).contains(rowName)) {
-            View.OnClickListener onClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    game.setCurrentTextView((TextView) v);
-                    Intent intent = new Intent(mainActivity, KeyboardActivity.class);
-                    intent.putExtra(Consts.INTENT_ROW_NAME, ((Cell)v.getTag()).getRow());
-                    mainActivity.startActivityForResult(intent, 1);
-                }
-            };
-            result.setOnClickListener(onClickListener);
+            result.setOnClickListener(createOnClickListener());
         }
-        result.setLayoutParams(new ConstraintLayout.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-//        result.setHeight(TEXT_HEIGHT);
-//        result.setWidth(100);
+        result.setHeight(TEXT_HEIGHT);
+        result.setWidth(100);
         result.setTextSize(mainActivity.getResources().getDimension(R.dimen.main_table_font_size));
         result.setTextColor(fontColor);
         result.setGravity(Gravity.CENTER_HORIZONTAL);
+        mainActivity.registerForContextMenu(result);
         return result;
     }
 
@@ -127,6 +116,12 @@ public class GameTable {
             TextView emptyTextView = createTextView(rowName);
             emptyTextView.setTag(new Cell(player, rowName));
             tableRow.addView(emptyTextView);
+            List<TextView> listOfTextViews = playersTextViewsMap.get(player.getName());
+            if (listOfTextViews == null) {
+                listOfTextViews = new ArrayList<>();
+            }
+            listOfTextViews.add(emptyTextView);
+            playersTextViewsMap.put(player.getName(), listOfTextViews);
             if (rowName.equals(SCHOOL)) {
                 schoolTextViewsMap.put(player.getName(), emptyTextView);
             }
@@ -137,10 +132,59 @@ public class GameTable {
     }
 
     public void setSchoolValue(Player player) {
-        schoolTextViewsMap.get(player.getName()).setText(String.valueOf(player.getSchool()));
+        TextView currentTextView = schoolTextViewsMap.get(player.getName());
+        int schoolValue = player.getSchool();
+        currentTextView.setText(String.valueOf(schoolValue));
+        if (schoolValue < 0) {
+            currentTextView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_red));
+        } else {
+            currentTextView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_dark_gray));
+        }
     }
 
     public void setTotalValue(Player player) {
         totalTextViewsMap.get(player.getName()).setText(String.valueOf(player.getTotal()));
+    }
+
+    public void highlightPlayerName(Player player) {
+        List<TextView> listOfTextViews;
+        for (Map.Entry<String, List<TextView>> entry : playersTextViewsMap.entrySet()) {
+            if (entry.getKey().equals(player.getName())) {
+                listOfTextViews = entry.getValue();
+                for (TextView textView : listOfTextViews) {
+                    if (textView.getText().equals("")) {
+                        Cell cell = (Cell)textView.getTag();
+                        if (!Arrays.asList(namesOfUnclickableRows).contains(cell.getRow())) {
+                            textView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_highlight));
+                            textView.setOnClickListener(createOnClickListener());
+                        }
+                    }
+                }
+            } else {
+                listOfTextViews = entry.getValue();
+                for (TextView textView : listOfTextViews) {
+                    if (textView.getText().equals("")) {
+                        textView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_dark_gray));
+                        textView.setOnClickListener(null);
+                    }
+                }
+            }
+        }
+    }
+
+    private View.OnClickListener createOnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((TextView)v).getText().equals("")) {
+                    game.setCurrentTextView((TextView) v);
+                    Intent intent = new Intent(mainActivity, KeyboardActivity.class);
+                    intent.putExtra(Consts.INTENT_ROW_NAME, ((Cell) v.getTag()).getRow());
+                    intent.putExtra(INTENT_IS_EDIT, false);
+                    mainActivity.startActivityForResult(intent, 1);
+                }
+            }
+        };
+        return onClickListener;
     }
 }

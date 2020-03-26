@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,7 +35,7 @@ public class ListActivity extends AppCompatActivity {
 
     public void fillListView(final List<Player> players) {
         stringArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, playersToString(players));
+                R.layout.my_simple_list_item, playersToString(players));
         listViewPlayers.setAdapter(stringArrayAdapter);
         listViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
@@ -98,5 +101,23 @@ public class ListActivity extends AppCompatActivity {
     private void init() {
         editTextPlayerName = findViewById(R.id.et_player_name);
         listViewPlayers = findViewById(R.id.lv_players);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
