@@ -1,6 +1,5 @@
 package com.example.dices2;
 
-import android.graphics.Color;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,6 +17,8 @@ public class Game {
     // TODO добавить другие виды правил игры
     private int totalNumberOfRows = 16;
     private int idCurrentPlayer = 0;
+    private boolean isGameStarted;
+    private Player currentPlayer;
 
     private Game() {
         players = new ArrayList<>();
@@ -38,30 +39,64 @@ public class Game {
     private void startGame() {
         getTotalNumberOfMoves();
         mainActivity.fillMainTable(players);
+        idCurrentPlayer = 0;
         highlightNextPlayer();
+        clearPlayersValues();
+        isGameStarted = true;
+        currentPlayer = players.get(idCurrentPlayer);
+    }
+
+    private void clearPlayersValues() {
+        for(Player player : players) {
+            player.clearAllValues();
+        }
     }
 
     private void highlightNextPlayer() {
-        if (idCurrentPlayer > players.size()-1) {
+        if (idCurrentPlayer > players.size() - 1) {
             idCurrentPlayer = 0;
+            currentPlayer = players.get(idCurrentPlayer);
         }
-        mainActivity.highlightPlayerName(players.get(idCurrentPlayer++));
+        mainActivity.highlightPlayersMove(players.get(idCurrentPlayer++));
     }
 
-    public void makeMove(String value, boolean isEdit) {
+    private void makeMove() {
+        totalNumberOfMoves--;
+        highlightNextPlayer();
+        mainActivity.setTextViewHighlight(currentTextView, true);
+    }
+
+    private void makeEditing(Cell cell) {
+        if (currentTextView.getText().equals("")) {
+            mainActivity.setTextViewHighlight(currentTextView, false);
+        } else {
+            mainActivity.setTextViewHighlight(currentTextView, true);
+        }
+        if (cell.getPlayer() == currentPlayer) {
+            mainActivity.highlightPlayersMove(currentPlayer);
+        }
+    }
+
+    public void keyboardActivityOkButtonClicked(String value, boolean isEdit) {
         Cell cell = (Cell) currentTextView.getTag();
         Player player = cell.getPlayer();
         String rowName = cell.getRow();
         player.setValue(rowName, value);
-        showSchool(player);
-        if (!isEdit) {
-            totalNumberOfMoves--;
-            highlightNextPlayer();
+        setTextToCurrentTextView(value);
+        if (isEdit) {
+            makeEditing(cell);
+            //mainActivity.highlightPlayersMove(player);
+        } else {
+            makeMove();
         }
-        if (isCountTotalEveryMove || isGameOver()) {
+        showSchool(player);
+        if (isCountTotalEveryMove) {
             showTotal(player);
         }
-        mainActivity.setCurrentTextViewBackground(currentTextView);
+        if (isGameOver()) {
+            showAllTotals();
+            isGameStarted = false;
+        }
     }
 
     // Работа с MainActivity
@@ -85,6 +120,12 @@ public class Game {
 
     private void showTotal(Player player) {
         mainActivity.showTotal(player);
+    }
+
+    private void showAllTotals() {
+        for (Player player : players) {
+            showTotal(player);
+        }
     }
 
     // Работа с ListActivity
@@ -143,5 +184,18 @@ public class Game {
 
     public boolean isCountTotalEveryMove() {
         return isCountTotalEveryMove;
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
+    }
+
+    public boolean isDuplicatePlayer(String name) {
+        for (Player player : players) {
+            if (player.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -12,7 +12,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/players_list"
+        android:text="@string/new_game"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/b_add"
         android:textColor="@color/white"
-        android:textColorHint="@color/colorBackgroundLight"/>
+        android:textColorHint="@color/colorBackgroundLight"
+        android:textCursorDrawable="@null"/>
 
     <Button
         android:id="@+id/b_add"
@@ -38,6 +39,7 @@
         android:layout_height="wrap_content"
         android:text="@string/add"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintStart_toEndOf="@id/et_player_name"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -58,6 +60,7 @@
         android:layout_height="wrap_content"
         android:text="@string/clear"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/b_save" />
@@ -67,8 +70,9 @@
         android:onClick="startGameButtonClicked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
+        android:text="@string/start_new_game"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/b_clear"
         app:layout_constraintEnd_toEndOf="parent" />

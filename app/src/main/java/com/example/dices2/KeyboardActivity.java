@@ -29,6 +29,7 @@ public class KeyboardActivity extends AppCompatActivity {
             result = getIntent().getStringExtra(INTENT_EDITED_VALUE);
             textViewResult.setText(result);
         }
+        buttonSave.setEnabled(isEdit);
     }
 
     public void onKeyboardButtonClicked(View v) {
@@ -51,7 +52,7 @@ public class KeyboardActivity extends AppCompatActivity {
             result = result.substring(0, result.length() - 1);
             textViewResult.setText(result);
         }
-        if (result.equals("")) {
+        if (result.equals("") && !isEdit) {
             buttonSave.setEnabled(false);
         }
     }

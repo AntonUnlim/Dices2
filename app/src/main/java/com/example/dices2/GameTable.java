@@ -137,16 +137,19 @@ public class GameTable {
         currentTextView.setText(String.valueOf(schoolValue));
         if (schoolValue < 0) {
             currentTextView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_red));
+        } else if (player.isSchoolFinished()) {
+            currentTextView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_green));
         } else {
             currentTextView.setBackground(mainActivity.getResources().getDrawable(R.drawable.text_view_back_dark_gray));
         }
+
     }
 
     public void setTotalValue(Player player) {
         totalTextViewsMap.get(player.getName()).setText(String.valueOf(player.getTotal()));
     }
 
-    public void highlightPlayerName(Player player) {
+    public void highlightPlayersMove(Player player) {
         List<TextView> listOfTextViews;
         for (Map.Entry<String, List<TextView>> entry : playersTextViewsMap.entrySet()) {
             if (entry.getKey().equals(player.getName())) {

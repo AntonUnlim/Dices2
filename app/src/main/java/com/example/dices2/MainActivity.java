@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -45,13 +44,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.players_list:
-                Intent intent = new Intent(this, ListActivity.class);
-                startActivity(intent);
+            case R.id.new_game:
+                if (game.isGameStarted()) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    alertDialogBuilder.setTitle("Прервать игру");
+                    alertDialogBuilder.setMessage("Вы уверены, что хотите прервать текущую игру?");
+                    alertDialogBuilder.setNegativeButton("Нет", null);
+                    alertDialogBuilder.setPositiveButton("Да", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            startListActivity();
+                        }
+                    });
+                    alertDialogBuilder.show();
+                } else {
+                    startListActivity();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void startListActivity() {
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -60,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         if (data == null) return;
         String value = data.getStringExtra(INTENT_INPUT_VALUE);
         boolean isEdit = data.getBooleanExtra(INTENT_IS_EDIT, false);
-        game.setTextToCurrentTextView(value);
-        game.makeMove(value, isEdit);
+        game.keyboardActivityOkButtonClicked(value, isEdit);
     }
 
     @Override
@@ -98,16 +113,18 @@ public class MainActivity extends AppCompatActivity {
         tableLayoutMain = findViewById(R.id.tl_main);
     }
 
-    public void setCurrentTextViewBackground(TextView currentTextView) {
-        currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_light_gray));
+    public void setTextViewHighlight(TextView currentTextView, boolean isHighlight) {
+        if (isHighlight) {
+            currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_light_gray));
+        } else {
+            currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_dark_gray));
+        }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo info) {
-        if (!((TextView)view).getText().equals("")) {
-            menu.add(0, MENU_EDIT, 0, "Редактировать");
-            game.setCurrentTextView((TextView)view);
-        }
+        menu.add(0, MENU_EDIT, 0, "Редактировать");
+        game.setCurrentTextView((TextView)view);
     }
 
     @Override
@@ -126,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 1);
     }
 
-    public void highlightPlayerName(Player player) {
-        gameTable.highlightPlayerName(player);
+    public void highlightPlayersMove(Player player) {
+        gameTable.highlightPlayersMove(player);
     }
 }

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Кости</string>
-    <string name="players_list">Список игроков</string>
+    <string name="new_game">Новая игра</string>
+    <string name="start_new_game">Начать игру</string>
     <string name="clear">Очистить</string>
     <string name="input_name">Введите имя</string>
     <string name="add">Добавить</string>

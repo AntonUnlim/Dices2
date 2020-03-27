@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,11 +63,15 @@ public class ListActivity extends AppCompatActivity {
 
     public void addButtonClicked(View view) {
         String playerName = editTextPlayerName.getText().toString();
-        if (playerName.equals("")) {
-            showToast(getString(R.string.name_cannot_be_empty));
+        if (game.isDuplicatePlayer(playerName)) {
+            showToast("Имена игроков не могут повторяться!");
         } else {
-            game.addPlayer(playerName);
-            editTextPlayerName.setText("");
+            if (playerName.equals("")) {
+                showToast(getString(R.string.name_cannot_be_empty));
+            } else {
+                game.addPlayer(playerName);
+                editTextPlayerName.setText("");
+            }
         }
     }
 
@@ -82,8 +88,12 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void startGameButtonClicked(View view) {
-        game.startGameButtonClicked();
-        finish();
+        if (listViewPlayers.getAdapter().getCount() < 2) {
+            showToast("Для начала игры надо миниум два игрока");
+        } else {
+            game.startGameButtonClicked();
+            finish();
+        }
     }
 
     private void showToast(String message) {
@@ -101,6 +111,8 @@ public class ListActivity extends AppCompatActivity {
     private void init() {
         editTextPlayerName = findViewById(R.id.et_player_name);
         listViewPlayers = findViewById(R.id.lv_players);
+        // set white color to underline
+        editTextPlayerName.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
