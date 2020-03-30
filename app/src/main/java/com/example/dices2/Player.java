@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import static com.example.dices2.Consts.*;
 
-public class Player {
+public class Player implements Comparable<Player> {
     private String name;
     private Map<RowName, Integer> values;
 
@@ -96,5 +96,11 @@ public class Player {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public int compareTo(Player player) {
+        Integer temp = getTotal();
+        return temp.compareTo(player.getTotal());
     }
 }

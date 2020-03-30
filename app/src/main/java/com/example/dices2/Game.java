@@ -1,9 +1,10 @@
 package com.example.dices2;
 
-import android.util.Log;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
     private static Game instance;
@@ -18,12 +19,10 @@ public class Game {
     private int idCurrentPlayer = 0;
     private boolean isGameStarted;
     private Player currentPlayer;
+    private Map<Player, Integer> playersPlaces;
 
     private Game() {
         players = new ArrayList<>();
-        //players.add(new Player("Test 1"));
-        //playerList.add(new Player("Test 2"));
-        //playerList.add(new Player("Test 3"));
     }
 
     public static Game getInstance() {
@@ -66,7 +65,6 @@ public class Game {
         totalNumberOfMoves--;
         highlightNextPlayer();
         mainActivity.setTextViewHighlight(currentCell, true);
-        Log.i("MyLog", "Moves left - " + totalNumberOfMoves);
     }
 
     private void makeEditing(Cell cell) {
@@ -97,6 +95,7 @@ public class Game {
         if (isGameOver()) {
             showAllTotals();
             isGameStarted = false;
+            showAllPlaces();
         }
         enableTextViewAfterThreeClasses(player);
     }
@@ -133,6 +132,17 @@ public class Game {
     private void showAllTotals() {
         for (Player player : players) {
             showTotal(player);
+        }
+    }
+
+    private void showPlayerPlace(Player player, int place) {
+        mainActivity.showPlayerPlace(player, place);
+    }
+
+    private void showAllPlaces() {
+        calcPlaces();
+        for (Player player : players) {
+            showPlayerPlace(player, playersPlaces.get(player));
         }
     }
 
@@ -205,5 +215,25 @@ public class Game {
             }
         }
         return false;
+    }
+
+    private void calcPlaces() {
+        playersPlaces = new LinkedHashMap<>();
+        List<Player> playersSortedByTotalValue = new ArrayList<>(players);
+        Collections.sort(playersSortedByTotalValue, Collections.<Player>reverseOrder());
+        Player currentPlayer = playersSortedByTotalValue.get(0);
+        int place = 1;
+        int currentValue = currentPlayer.getTotal();
+        playersPlaces.put(currentPlayer, place);
+        for (int i = 1; i < playersSortedByTotalValue.size(); i++) {
+            Player nextPlayer = playersSortedByTotalValue.get(i);
+            if (currentValue == nextPlayer.getTotal()) {
+                playersPlaces.put(nextPlayer, place);
+            } else {
+                place++;
+                currentValue = nextPlayer.getTotal();
+                playersPlaces.put(nextPlayer, place);
+            }
+        }
     }
 }

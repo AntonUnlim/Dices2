@@ -327,4 +327,8 @@ public class GameTable {
         }
         return false;
     }
+
+    public void setPlayerPlace(Player player, int place) {
+        placeTextViewsMap.get(player).setText(String.valueOf(place));
+    }
 }

@@ -158,4 +158,8 @@ public class MainActivity extends AppCompatActivity {
     public void setClickedCell(Cell cell) {
         game.setCurrentCell(cell);
     }
+
+    public void showPlayerPlace(Player player, int place) {
+        gameTable.setPlayerPlace(player, place);
+    }
 }
