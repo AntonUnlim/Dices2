@@ -113,18 +113,18 @@ public class MainActivity extends AppCompatActivity {
         tableLayoutMain = findViewById(R.id.tl_main);
     }
 
-    public void setTextViewHighlight(TextView currentTextView, boolean isHighlight) {
+    public void setTextViewHighlight(Cell currentCell, boolean isHighlight) {
         if (isHighlight) {
-            currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_light_gray));
+            currentCell.setBackground(getResources().getDrawable(R.drawable.text_view_back_light_gray));
         } else {
-            currentTextView.setBackground(getResources().getDrawable(R.drawable.text_view_back_dark_gray));
+            currentCell.setBackground(getResources().getDrawable(R.drawable.text_view_back_dark_gray));
         }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo info) {
         menu.add(0, MENU_EDIT, 0, "Редактировать");
-        game.setCurrentTextView((TextView)view);
+        game.setCurrentCell((Cell)view);
     }
 
     @Override
@@ -135,15 +135,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    public void startKeyboardActivityForEdit(String editedValue, String rowName) {
+    public void startKeyboardActivityForEdit(String editedValue, RowName rowName) {
         Intent intent = new Intent(this, KeyboardActivity.class);
         intent.putExtra(INTENT_EDITED_VALUE, editedValue);
-        intent.putExtra(INTENT_ROW_NAME, rowName);
+        intent.putExtra(INTENT_ROW_NAME, rowName.getName());
         intent.putExtra(INTENT_IS_EDIT, true);
         startActivityForResult(intent, 1);
     }
 
     public void highlightPlayersMove(Player player) {
         gameTable.highlightPlayersMove(player);
+    }
+
+    public void switchOffPlayersMove(Player player) {
+        gameTable.switchOffPlayersMove(player);
+    }
+
+    public void enableAfterThreeClassesTextViews(Player player) {
+        gameTable.enableAfterThreeClassesTextViews(player);
+    }
+
+    public void setClickedCell(Cell cell) {
+        game.setCurrentCell(cell);
     }
 }

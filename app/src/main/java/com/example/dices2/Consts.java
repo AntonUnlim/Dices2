@@ -1,27 +1,29 @@
 package com.example.dices2;
 
+import android.graphics.Color;
+
+import static com.example.dices2.RowName.*;
+
 public class Consts {
-    public static final String NAMES = "Names";
-    public static final String SEPARATOR = "Separator";
-    public static final String TRIANGLE = "Три";
-    public static final String SCHOOL = "Школа";
-    public static final String TOTAL = "Итого";
-    public static final String PLACE = "Место";
-    public static final String[] namesOfRows = {
-            NAMES, "1", "2", "3", "4", "5", "6", SCHOOL, SEPARATOR,
-            "Два", "2+2", TRIANGLE, "Малый", "Большой", SEPARATOR,
-            "Фула", "Каре", "Покер", "Шанс 1", "Шанс 2", SEPARATOR, TOTAL, PLACE};
-    public static final String[] namesOfValuableRows = {
-            "1", "2", "3", "4", "5", "6",
-            "Два", "2+2", TRIANGLE, "Малый", "Большой",
-            "Фула", "Каре", "Покер", "Шанс 1", "Шанс 2"};
-    public static final String[] namesOfRowsWithoutSchool = {
-            "Два", "2+2", TRIANGLE, "Малый", "Большой",
-            "Фула", "Каре", "Покер", "Шанс 1", "Шанс 2"};
-    public static final String[] namesOfSchoolRows = {"1", "2", "3", "4", "5", "6"};
+    public static final RowName[] namesOfRows = {NAMES, ONE, TWO, THREE, FOUR, FIVE, SIX, SCHOOL, SEPARATOR,
+                                                PAIR, TWO_PLUS_TWO, TRIANGLE, SMALL, BIG, SEPARATOR,
+                                                FULL, SQUARE, POKER, CHANCE1, CHANCE2, SEPARATOR, TOTAL, PLACE};
+    public static final RowName[] namesOfValuableRows = {
+            ONE, TWO, THREE, FOUR, FIVE, SIX,
+            PAIR, TWO_PLUS_TWO, TRIANGLE, SMALL, BIG,
+            FULL, SQUARE, POKER, CHANCE1, CHANCE2};
+    public static final RowName[] namesOfRowsWithoutSchool = {
+            PAIR, TWO_PLUS_TWO, TRIANGLE, SMALL, BIG,
+            FULL, SQUARE, POKER, CHANCE1, CHANCE2};
+    public static final RowName[] NAMES_OF_SCHOOL_ROWS = {ONE, TWO, THREE, FOUR, FIVE, SIX};
 
     public static final String INTENT_INPUT_VALUE = "input_value";
     public static final String INTENT_ROW_NAME = "row_name";
     public static final String INTENT_IS_EDIT = "is_edit";
     public static final String INTENT_EDITED_VALUE = "edited_value";
+    public static final String INTENT_IS_IN_SCHOOL = "is_in_school";
+
+    public static final int MAIN_TABLE_FONT_SIZE = 24;
+    public static final int MAIN_TABLE_TEXT_COLOR = Color.WHITE;
+    public static final int SEPARATOR_HEIGHT = 10;
 }

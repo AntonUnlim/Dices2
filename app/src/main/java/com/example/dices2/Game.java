@@ -1,6 +1,6 @@
 package com.example.dices2;
 
-import android.widget.TextView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,7 @@ public class Game {
     private MainActivity mainActivity;
     private ListActivity listActivity;
     private List<Player> players;
-    private TextView currentTextView;
-    // TODO добавить галочку
+    private Cell currentCell;
     private boolean isCountTotalEveryMove = false;
     private int totalNumberOfMoves;
     // TODO добавить другие виды правил игры
@@ -53,39 +52,41 @@ public class Game {
     }
 
     private void highlightNextPlayer() {
-        if (idCurrentPlayer > players.size() - 1) {
-            idCurrentPlayer = 0;
-            currentPlayer = players.get(idCurrentPlayer);
-        }
-        mainActivity.highlightPlayersMove(players.get(idCurrentPlayer++));
+        int playersAmount = players.size();
+        idCurrentPlayer = (idCurrentPlayer > playersAmount - 1) ? 0 : idCurrentPlayer;
+        int idHighlightOff = (idCurrentPlayer == 0) ? playersAmount - 1 : idCurrentPlayer - 1;
+        int idHighlightOn = (idCurrentPlayer > playersAmount - 1) ? 0 : idCurrentPlayer;
+        mainActivity.switchOffPlayersMove(players.get(idHighlightOff));
+        currentPlayer = players.get(idHighlightOn);
+        mainActivity.highlightPlayersMove(players.get(idHighlightOn));
+        idCurrentPlayer++;
     }
 
     private void makeMove() {
         totalNumberOfMoves--;
         highlightNextPlayer();
-        mainActivity.setTextViewHighlight(currentTextView, true);
+        mainActivity.setTextViewHighlight(currentCell, true);
+        Log.i("MyLog", "Moves left - " + totalNumberOfMoves);
     }
 
     private void makeEditing(Cell cell) {
-        if (currentTextView.getText().equals("")) {
-            mainActivity.setTextViewHighlight(currentTextView, false);
+        if (currentCell.getText().equals("")) {
+            mainActivity.setTextViewHighlight(currentCell, false);
         } else {
-            mainActivity.setTextViewHighlight(currentTextView, true);
+            mainActivity.setTextViewHighlight(currentCell, true);
         }
-        if (cell.getPlayer() == currentPlayer) {
+        if (cell.getOwner() == currentPlayer) {
             mainActivity.highlightPlayersMove(currentPlayer);
         }
     }
 
     public void keyboardActivityOkButtonClicked(String value, boolean isEdit) {
-        Cell cell = (Cell) currentTextView.getTag();
-        Player player = cell.getPlayer();
-        String rowName = cell.getRow();
+        Player player = currentCell.getOwner();
+        RowName rowName = currentCell.getRow();
         player.setValue(rowName, value);
         setTextToCurrentTextView(value);
         if (isEdit) {
-            makeEditing(cell);
-            //mainActivity.highlightPlayersMove(player);
+            makeEditing(currentCell);
         } else {
             makeMove();
         }
@@ -97,6 +98,13 @@ public class Game {
             showAllTotals();
             isGameStarted = false;
         }
+        enableTextViewAfterThreeClasses(player);
+    }
+
+    private void enableTextViewAfterThreeClasses(Player player) {
+        if (player.isTreeClassesInSchoolAreFinished()) {
+            mainActivity.enableAfterThreeClassesTextViews(player);
+        }
     }
 
     // Работа с MainActivity
@@ -106,12 +114,12 @@ public class Game {
         mainActivity.fillMainTable(players);
     }
 
-    public void setCurrentTextView(TextView textView) {
-        this.currentTextView = textView;
+    public void setCurrentCell(Cell cell) {
+        this.currentCell = cell;
     }
 
     public void setTextToCurrentTextView(String value) {
-        currentTextView.setText(value);
+        currentCell.setText(value);
     }
 
     private void showSchool(Player player) {
@@ -173,9 +181,9 @@ public class Game {
     }
 
     public void onEditMenuClicked() {
-        Cell cell = (Cell) currentTextView.getTag();
-        String rowName = cell.getRow();
-        mainActivity.startKeyboardActivityForEdit(currentTextView.getText().toString(), rowName);
+        Cell cell = currentCell;
+        RowName rowName = cell.getRow();
+        mainActivity.startKeyboardActivityForEdit(currentCell.getText().toString(), rowName);
     }
 
     public void setCountTotalEveryMove(boolean countTotalEveryMove) {

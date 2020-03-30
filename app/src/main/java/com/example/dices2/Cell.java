@@ -1,21 +1,32 @@
 package com.example.dices2;
 
+import android.content.Context;
+import android.view.Gravity;
+
 import java.io.Serializable;
 
-public class Cell implements Serializable {
-    private Player player;
-    private String row;
+public class Cell extends androidx.appcompat.widget.AppCompatTextView implements Serializable {
+    private Player owner;
+    private RowName row;
 
-    public Cell(Player player, String row) {
-        this.player = player;
+    public Cell(Context context, Player owner, RowName row) {
+        super(context);
+        this.owner = owner;
         this.row = row;
+        setTextColor(Consts.MAIN_TABLE_TEXT_COLOR);
+        setGravity(Gravity.CENTER_HORIZONTAL);
+        setTextSize(Consts.MAIN_TABLE_FONT_SIZE);
     }
 
-    public Player getPlayer() {
-        return player;
+    public Player getOwner() {
+        return owner;
     }
 
-    public String getRow() {
+    public RowName getRow() {
         return row;
+    }
+
+    public boolean isEmpty() {
+        return getText().equals("") || getText() == null;
     }
 }

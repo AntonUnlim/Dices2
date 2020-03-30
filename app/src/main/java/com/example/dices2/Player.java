@@ -8,7 +8,7 @@ import static com.example.dices2.Consts.*;
 
 public class Player {
     private String name;
-    private Map<String, Integer> values;
+    private Map<RowName, Integer> values;
 
     public Player(String name) {
         this.name = name;
@@ -19,18 +19,17 @@ public class Player {
         return name;
     }
 
-    public int getValue(String rowName) {
+    public int getValue(RowName rowName) {
         return values.get(rowName);
     }
 
-    public void setValue(String rowName, String value) {
-
+    public void setValue(RowName rowName, String value) {
         values.put(rowName, getIntValueFromString(value));
     }
 
     public int getSchool() {
         int result = 0;
-        for (String rowName : namesOfSchoolRows) {
+        for (RowName rowName : NAMES_OF_SCHOOL_ROWS) {
             Integer value = values.get(rowName);
             if (value != null) {
                 result += value;
@@ -44,7 +43,7 @@ public class Player {
 
     public int getTotal() {
         int result = 0;
-        for (String rowName : namesOfRowsWithoutSchool) {
+        for (RowName rowName : namesOfRowsWithoutSchool) {
             Integer value = values.get(rowName);
             if (value != null) {
                 result += value;
@@ -64,12 +63,22 @@ public class Player {
     }
 
     public boolean isSchoolFinished() {
-        for (String schoolClass : namesOfSchoolRows) {
+        for (RowName schoolClass : NAMES_OF_SCHOOL_ROWS) {
             if (values.get(schoolClass) == null) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isTreeClassesInSchoolAreFinished() {
+        int count = 0;
+        for (RowName schoolClass : NAMES_OF_SCHOOL_ROWS) {
+            if (values.get(schoolClass) != null && !values.get(schoolClass).equals("")) {
+                count++;
+            }
+        }
+        return count >= 3;
     }
 
     public void clearAllValues() {
