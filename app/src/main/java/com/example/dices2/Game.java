@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.dices2.Consts.*;
+
 public class Game {
     private static Game instance;
     private MainActivity mainActivity;
@@ -13,6 +15,7 @@ public class Game {
     private List<Player> players;
     private Cell currentCell;
     private boolean isCountTotalEveryMove = false;
+    private boolean isCountPlaceEveryMove = false;
     private int totalNumberOfMoves;
     // TODO добавить другие виды правил игры
     private int totalNumberOfRows = 16;
@@ -67,8 +70,8 @@ public class Game {
         mainActivity.setTextViewHighlight(currentCell, true);
     }
 
-    private void makeEditing(Cell cell) {
-        if (currentCell.getText().equals("")) {
+    private void makeEdit(Cell cell) {
+        if (currentCell.isEmpty()) {
             mainActivity.setTextViewHighlight(currentCell, false);
         } else {
             mainActivity.setTextViewHighlight(currentCell, true);
@@ -76,15 +79,19 @@ public class Game {
         if (cell.getOwner() == currentPlayer) {
             mainActivity.highlightPlayersMove(currentPlayer);
         }
+//        if (isEditInSchool(cell)) {
+//            mainActivity.disableFullSquarePokerTextViews(currentPlayer);
+//        }
     }
 
-    public void keyboardActivityOkButtonClicked(String value, boolean isEdit) {
+    public void okButtonOnKeyboardActivityClicked(String value, boolean isEdit) {
         Player player = currentCell.getOwner();
         RowName rowName = currentCell.getRow();
         player.setValue(rowName, value);
         setTextToCurrentTextView(value);
+        refreshFullSquarePokerTextViews(player);
         if (isEdit) {
-            makeEditing(currentCell);
+            makeEdit(currentCell);
         } else {
             makeMove();
         }
@@ -92,21 +99,24 @@ public class Game {
         if (isCountTotalEveryMove) {
             showTotal(player);
         }
+        if (isCountPlaceEveryMove) {
+            showAllPlaces();
+        }
         if (isGameOver()) {
             showAllTotals();
             isGameStarted = false;
             showAllPlaces();
         }
-        enableTextViewAfterThreeClasses(player);
     }
 
-    private void enableTextViewAfterThreeClasses(Player player) {
-        if (player.isTreeClassesInSchoolAreFinished()) {
-            mainActivity.enableAfterThreeClassesTextViews(player);
+    private void refreshFullSquarePokerTextViews(Player player) {
+        if (player.isThreeClassesInSchoolAreFinished() && !player.isSecondNonSchoolPartAdded()) {
+            mainActivity.enableFullSquarePokerTextViews(player);
+        }
+        if (!player.isThreeClassesInSchoolAreFinished() && player.isSecondNonSchoolPartAdded()) {
+            mainActivity.disableFullSquarePokerTextViews(player);
         }
     }
-
-    // Работа с MainActivity
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -200,6 +210,10 @@ public class Game {
         isCountTotalEveryMove = countTotalEveryMove;
     }
 
+    public void setCountPlaceEveryMove(boolean countPlaceEveryMove) {
+        isCountPlaceEveryMove = countPlaceEveryMove;
+    }
+
     public boolean isCountTotalEveryMove() {
         return isCountTotalEveryMove;
     }
@@ -235,5 +249,18 @@ public class Game {
                 playersPlaces.put(nextPlayer, place);
             }
         }
+    }
+
+    public boolean isCountPlaceEveryMove() {
+        return isCountPlaceEveryMove;
+    }
+
+    private boolean isEditInSchool(Cell cell) {
+        for (RowName rowName : NAMES_OF_SCHOOL_ROWS) {
+            if (cell.getRow() == rowName) {
+                return true;
+            }
+        }
+        return false;
     }
 }

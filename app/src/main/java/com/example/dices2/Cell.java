@@ -3,9 +3,9 @@ package com.example.dices2;
 import android.content.Context;
 import android.view.Gravity;
 
-import java.io.Serializable;
+import java.util.Objects;
 
-public class Cell extends androidx.appcompat.widget.AppCompatTextView implements Serializable {
+public class Cell extends androidx.appcompat.widget.AppCompatTextView {
     private Player owner;
     private RowName row;
 
@@ -28,5 +28,19 @@ public class Cell extends androidx.appcompat.widget.AppCompatTextView implements
 
     public boolean isEmpty() {
         return getText().equals("") || getText() == null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cell cell = (Cell) o;
+        return owner.equals(cell.owner) &&
+                row == cell.row;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, row);
     }
 }

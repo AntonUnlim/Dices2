@@ -21,13 +21,24 @@
 
     <Switch
         android:id="@+id/is_count_total_every_move"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/count_total_every_move"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_settings_title"
-        tools:layout_editor_absoluteY="188dp"
+        app:layout_constraintBottom_toTopOf="@id/is_count_place_every_move"
+        android:textColor="@color/white"/>
+
+    <Switch
+        android:id="@+id/is_count_place_every_move"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/count_place_every_move"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/is_count_place_every_move"
+        app:layout_constraintBottom_toTopOf="@id/settings_cancel_button"
         android:textColor="@color/white"/>
 
     <Button
@@ -35,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onSettingsCancelButtonClicked"
-        app:layout_constraintTop_toBottomOf="@id/is_count_total_every_move"
+        app:layout_constraintTop_toBottomOf="@id/is_count_place_every_move"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/settings_save_button"
         android:text="@string/cancel"/>
@@ -44,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onSettingsSaveButtonClicked"
-        app:layout_constraintTop_toBottomOf="@id/is_count_total_every_move"
+        app:layout_constraintTop_toBottomOf="@id/is_count_place_every_move"
         app:layout_constraintStart_toEndOf="@id/settings_cancel_button"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/save"/>

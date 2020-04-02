@@ -23,7 +23,7 @@ public class Consts {
     public static final String INTENT_EDITED_VALUE = "edited_value";
     public static final String INTENT_IS_IN_SCHOOL = "is_in_school";
 
-    public static final int MAIN_TABLE_FONT_SIZE = 24;
+    public static final int MAIN_TABLE_FONT_SIZE = 32;
     public static final int MAIN_TABLE_TEXT_COLOR = Color.WHITE;
     public static final int SEPARATOR_HEIGHT = 10;
 }

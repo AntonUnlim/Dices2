@@ -27,7 +27,7 @@ public class GameTable {
     private Map<Player, TextView> schoolTextViewsMap;
     private Map<Player, TextView> totalTextViewsMap;
     private Map<Player, List<Cell>> playersCellsMap;
-    private Map<Player, List<Cell>> playersCellsAfterThreeClassesMap;
+    private Map<Player, List<Cell>> playersFullSquarePokerCellsMap;
     private List<Player> players;
     private final int FONT_COLOR = MAIN_TABLE_TEXT_COLOR;
     private Drawable backgroundDarkGray;
@@ -53,7 +53,7 @@ public class GameTable {
         playersCellsMap = new HashMap<>();
         playersNamesTextViews = new HashMap<>();
         placeTextViewsMap = new HashMap<>();
-        playersCellsAfterThreeClassesMap = new HashMap<>();
+        playersFullSquarePokerCellsMap = new HashMap<>();
     }
 
     public void fillTable(List<Player> players) {
@@ -204,12 +204,12 @@ public class GameTable {
             newCell.setBackground(backgroundDarkGray);
             mainActivity.registerForContextMenu(newCell);
             tableRow.addView(newCell);
-            if (playersCellsAfterThreeClassesMap.get(player) == null) {
+            if (playersFullSquarePokerCellsMap.get(player) == null) {
                 List<Cell> cells = new ArrayList<>();
                 cells.add(newCell);
-                playersCellsAfterThreeClassesMap.put(player, cells);
+                playersFullSquarePokerCellsMap.put(player, cells);
             } else {
-                playersCellsAfterThreeClassesMap.get(player).add(newCell);
+                playersFullSquarePokerCellsMap.get(player).add(newCell);
             }
         }
     }
@@ -230,7 +230,7 @@ public class GameTable {
         textView.setTextColor(FONT_COLOR);
         textView.setPadding(LEFT_RIGHT_TEXTVIEW_PADDING, 0, LEFT_RIGHT_TEXTVIEW_PADDING, 0);
         textView.setBackground(backgroundDarkGray);
-        textView.setWidth(170);
+        textView.setWidth(200);
         return textView;
     }
 
@@ -315,8 +315,19 @@ public class GameTable {
     }
 
     public void enableAfterThreeClassesTextViews(Player player) {
-        List<Cell> cells = playersCellsAfterThreeClassesMap.get(player);
+        List<Cell> cells = playersFullSquarePokerCellsMap.get(player);
         playersCellsMap.get(player).addAll(cells);
+        player.setSecondNonSchoolPartAdded(true);
+    }
+
+    public void disableAfterThreeClassesTextViews(Player player) {
+        List<Cell> cells = playersFullSquarePokerCellsMap.get(player);
+        playersCellsMap.get(player).removeAll(cells);
+        player.setSecondNonSchoolPartAdded(false);
+        for (Cell cell : cells) {
+            cell.setOnClickListener(null);
+            cell.setBackground(backgroundDarkGray);
+        }
     }
 
     public boolean isCellInSchool(Cell cell) {

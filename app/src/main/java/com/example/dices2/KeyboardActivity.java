@@ -35,12 +35,11 @@ public class KeyboardActivity extends AppCompatActivity {
         textViewTitle.setText(rowName);
         isEdit = intent.getBooleanExtra(INTENT_IS_EDIT, false);
         isInSchool = intent.getBooleanExtra(INTENT_IS_IN_SCHOOL, false);
-
         if (isEdit) {
             result = getIntent().getStringExtra(INTENT_EDITED_VALUE);
             textViewResult.setText(result);
         }
-        enableButton(buttonSave, false);
+        enableButton(buttonSave, isEdit);
         enableButton(buttonPlus, isInSchool);
     }
 

@@ -33,12 +33,13 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/keyboard_font_size"
             android:textColor="@color/red"
-            android:gravity="center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ib_backspace"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="55"/>
+            tools:text="55"
+            android:paddingStart="@dimen/main_padding"/>
+
         <ImageButton
             android:id="@+id/ib_backspace"
             android:onClick="onBackspaceButtonClicked"

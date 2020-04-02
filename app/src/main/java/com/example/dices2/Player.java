@@ -9,6 +9,7 @@ import static com.example.dices2.Consts.*;
 public class Player implements Comparable<Player> {
     private String name;
     private Map<RowName, Integer> values;
+    private boolean isSecondNonSchoolPartAdded = false;
 
     public Player(String name) {
         this.name = name;
@@ -24,7 +25,19 @@ public class Player implements Comparable<Player> {
     }
 
     public void setValue(RowName rowName, String value) {
-        values.put(rowName, getIntValueFromString(value));
+        if (value.equals("")) {
+            values.remove(rowName);
+        } else {
+            values.put(rowName, getIntValueFromString(value));
+        }
+    }
+
+    public boolean isSecondNonSchoolPartAdded() {
+        return isSecondNonSchoolPartAdded;
+    }
+
+    public void setSecondNonSchoolPartAdded(boolean secondNonSchoolPartAdded) {
+        isSecondNonSchoolPartAdded = secondNonSchoolPartAdded;
     }
 
     public int getSchool() {
@@ -53,7 +66,7 @@ public class Player implements Comparable<Player> {
     }
 
     private int getIntValueFromString(String value) {
-        if (value.equals("-") || value.equals("+") || value.equals("")) {
+        if (value.equals("-") || value.equals("+")) {
             return 0;
         } else if (value.charAt(0) == '+') {
             return Integer.parseInt(value.substring(1));
@@ -71,7 +84,7 @@ public class Player implements Comparable<Player> {
         return true;
     }
 
-    public boolean isTreeClassesInSchoolAreFinished() {
+    public boolean isThreeClassesInSchoolAreFinished() {
         int count = 0;
         for (RowName schoolClass : NAMES_OF_SCHOOL_ROWS) {
             if (values.get(schoolClass) != null && !values.get(schoolClass).equals("")) {

@@ -30,7 +30,8 @@
         app:layout_constraintEnd_toStartOf="@id/b_add"
         android:textColor="@color/white"
         android:textColorHint="@color/colorBackgroundLight"
-        android:textCursorDrawable="@null"/>
+        android:textCursorDrawable="@null"
+        android:inputType="textCapSentences"/>
 
     <Button
         android:id="@+id/b_add"

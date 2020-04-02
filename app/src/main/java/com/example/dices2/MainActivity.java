@@ -11,8 +11,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TableLayout;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         init();
         game = Game.getInstance();
         game.setMainActivity(this);
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         if (data == null) return;
         String value = data.getStringExtra(INTENT_INPUT_VALUE);
         boolean isEdit = data.getBooleanExtra(INTENT_IS_EDIT, false);
-        game.keyboardActivityOkButtonClicked(value, isEdit);
+        game.okButtonOnKeyboardActivityClicked(value, isEdit);
     }
 
     @Override
@@ -151,8 +152,12 @@ public class MainActivity extends AppCompatActivity {
         gameTable.switchOffPlayersMove(player);
     }
 
-    public void enableAfterThreeClassesTextViews(Player player) {
+    public void enableFullSquarePokerTextViews(Player player) {
         gameTable.enableAfterThreeClassesTextViews(player);
+    }
+
+    public void disableFullSquarePokerTextViews(Player player) {
+        gameTable.disableAfterThreeClassesTextViews(player);
     }
 
     public void setClickedCell(Cell cell) {
