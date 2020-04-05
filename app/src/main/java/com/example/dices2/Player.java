@@ -10,6 +10,7 @@ public class Player implements Comparable<Player> {
     private String name;
     private Map<RowName, Integer> values;
     private boolean isSecondNonSchoolPartAdded = false;
+    private int curPlace;
 
     public Player(String name) {
         this.name = name;
@@ -31,6 +32,15 @@ public class Player implements Comparable<Player> {
             values.put(rowName, getIntValueFromString(value));
         }
     }
+
+    public int getCurPlace() {
+        return curPlace;
+    }
+
+    public void setCurPlace(int curPlace) {
+        this.curPlace = curPlace;
+    }
+
 
     public boolean isSecondNonSchoolPartAdded() {
         return isSecondNonSchoolPartAdded;

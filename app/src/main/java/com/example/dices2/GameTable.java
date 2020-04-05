@@ -25,8 +25,8 @@ public class GameTable {
     private final RowName[] FIRST_NON_SCHOOL_PART_ROWS = {PAIR, TWO_PLUS_TWO, TRIANGLE, SMALL, BIG};
     private final RowName[] FULL_SQUARE_POKER_ROWS = {FULL, SQUARE, POKER};
     private final RowName[] CHANCES_ROWS = {CHANCE1, CHANCE2};
-    private Map<Player, TextView> schoolTextViewsMap;
-    private Map<Player, TextView> totalTextViewsMap;
+    private Map<Player, Cell> schoolTextViewsMap;
+    private Map<Player, Cell> totalTextViewsMap;
     private Map<Player, List<Cell>> playersCellsMap;
     private Map<Player, List<Cell>> playersFullSquarePokerCellsMap;
     private List<Player> players;
@@ -39,7 +39,7 @@ public class GameTable {
     private final float TEXT_SIZE = MAIN_TABLE_FONT_SIZE;
     private final int LEFT_RIGHT_TEXTVIEW_PADDING = 16;
     private Map<Player, TextView> playersNamesTextViews;
-    private Map<Player, TextView> placeTextViewsMap;
+    private Map<Player, Cell> placeTextViewsMap;
 
     public GameTable(MainActivity mainActivity, TableLayout mainTable) {
         this.mainActivity = mainActivity;
@@ -57,9 +57,10 @@ public class GameTable {
         playersFullSquarePokerCellsMap = new HashMap<>();
     }
 
-    public void fillTable(List<Player> players) {
+    public void fillTable(List<Player> players, Player player) {
         this.players = players;
         mainTable.removeAllViews();
+        allCells.clear();
         fillNamesRow();
         //addSeparatorRow();
         fillSchoolRows();
@@ -72,6 +73,31 @@ public class GameTable {
         //addSeparatorRow();
         fillTotalRows();
         fillPlaceRow();
+        fillSavedValues();
+        if (player != null) {
+            highlightPlayersMove(player);
+        }
+    }
+
+    private void fillSavedValues() {
+        for (Cell savedCell : savedCells) {
+            for (Cell cell : allCells) {
+                if (savedCell.equals(cell)) {
+                    cell.setValue(savedCell.getValue());
+                    mainActivity.setTextViewHighlight(cell, true);
+                    enableTextView(cell, false);
+                }
+            }
+        }
+        for (Player player : players) {
+            setSchoolValue(player);
+            if (mainActivity.getIsCountTotalEveryMove()) {
+                setTotalValue(player);
+            }
+            if (mainActivity.getIsCountPlaceEveryMove()) {
+                setPlayerPlace(player);
+            }
+        }
     }
 
     private void fillNamesRow() {
@@ -103,9 +129,10 @@ public class GameTable {
         nameOfRowTextView.setText(SCHOOL.getName());
         tableRow.addView(nameOfRowTextView);
         for (Player player : players) {
-            TextView textView = createNameOfPlayerTextView();
-            tableRow.addView(textView);
-            schoolTextViewsMap.put(player, textView);
+            Cell cell = createNonClickableCell(player, SCHOOL);
+            tableRow.addView(cell);
+            schoolTextViewsMap.put(player, cell);
+            allCells.add(cell);
         }
         mainTable.addView(tableRow);
     }
@@ -161,9 +188,10 @@ public class GameTable {
         nameOfRowTextView.setText(TOTAL.getName());
         tableRow.addView(nameOfRowTextView);
         for (Player player : players) {
-            TextView textView = createNameOfPlayerTextView();
-            tableRow.addView(textView);
-            totalTextViewsMap.put(player, textView);
+            Cell cell = createNonClickableCell(player, TOTAL);
+            tableRow.addView(cell);
+            totalTextViewsMap.put(player, cell);
+            allCells.add(cell);
         }
         mainTable.addView(tableRow);
     }
@@ -174,9 +202,10 @@ public class GameTable {
         placeTextView.setText(PLACE.getName());
         placeTableRow.addView(placeTextView);
         for (Player player : players) {
-            TextView textView = createNameOfPlayerTextView();
-            placeTableRow.addView(textView);
-            placeTextViewsMap.put(player, textView);
+            Cell cell = createNonClickableCell(player, PLACE);
+            placeTableRow.addView(cell);
+            placeTextViewsMap.put(player, cell);
+            allCells.add(cell);
         }
         mainTable.addView(placeTableRow);
     }
@@ -192,6 +221,7 @@ public class GameTable {
             mainActivity.registerForContextMenu(cell);
             tableRow.addView(cell);
             fillPlayersCellsMap(player, cell);
+            allCells.add(cell);
         }
     }
 
@@ -204,6 +234,7 @@ public class GameTable {
             setMutualParams(cell);
             mainActivity.registerForContextMenu(cell);
             tableRow.addView(cell);
+            allCells.add(cell);
             if (playersFullSquarePokerCellsMap.get(player) == null) {
                 List<Cell> cells = new ArrayList<>();
                 cells.add(cell);
@@ -250,27 +281,36 @@ public class GameTable {
         return textView;
     }
 
+    private Cell createNonClickableCell(Player player, RowName rowName) {
+        Cell cell = new Cell(mainActivity, player, rowName);
+        cell.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        cell.setGravity(Gravity.CENTER);
+        cell.setBackground(backgroundDarkGray);
+        setMutualParams(cell);
+        return cell;
+    }
+
     private void setMutualParams(TextView textView) {
         textView.setTextSize(TEXT_SIZE);
         textView.setTextColor(FONT_COLOR);
     }
 
     public void setSchoolValue(Player player) {
-        TextView currentTextView = schoolTextViewsMap.get(player);
+        Cell cell = schoolTextViewsMap.get(player);
         int schoolValue = player.getSchool();
-        currentTextView.setText(String.valueOf(schoolValue));
+        cell.setValue(String.valueOf(schoolValue));
         if (schoolValue < 0) {
-            currentTextView.setBackground(backgroundRed);
+            cell.setBackground(backgroundRed);
         } else if (player.isSchoolFinished()) {
-            currentTextView.setBackground(backgroundGreen);
+            cell.setBackground(backgroundGreen);
         } else {
-            currentTextView.setBackground(backgroundDarkGray);
+            cell.setBackground(backgroundDarkGray);
         }
 
     }
 
     public void setTotalValue(Player player) {
-        totalTextViewsMap.get(player).setText(String.valueOf(player.getTotal()));
+        totalTextViewsMap.get(player).setValue(String.valueOf(player.getTotal()));
     }
 
     public void highlightPlayersMove(Player player) {
@@ -350,7 +390,7 @@ public class GameTable {
         return false;
     }
 
-    public void setPlayerPlace(Player player, int place) {
-        placeTextViewsMap.get(player).setText(String.valueOf(place));
+    public void setPlayerPlace(Player player) {
+        placeTextViewsMap.get(player).setValue(String.valueOf(player.getCurPlace()));
     }
 }

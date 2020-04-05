@@ -54,13 +54,14 @@ public class KeyboardActivity extends AppCompatActivity {
 
     public void onKeyboardButtonClicked(View view) {
         String symbol = ((TextView)view).getText().toString();
+        boolean isCountKeyboardInputSymbolsLessThanThree = result.length() < 3;
         boolean isResultEmpty = result.equals("");
         boolean isFirstResultSymbolPlusOrMinus = result.equals("+") || result.equals("-");
         boolean isSymbolPlusOrMinus = symbol.equals("+") || symbol.equals("-");
         boolean isSymbolZero = symbol.equals("0");
-        if ((isResultEmpty && !isSymbolZero) ||
+        if (((isResultEmpty && !isSymbolZero) ||
                 (isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus && !isSymbolZero) ||
-                (!isResultEmpty && !isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus)) {
+                (!isResultEmpty && !isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus)) && isCountKeyboardInputSymbolsLessThanThree) {
             result += symbol;
             textViewResult.setText(result);
             enableButton(buttonSave, true);

@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -97,9 +103,9 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void fillMainTable(List<Player> players) {
+    public void fillMainTable(List<Player> players, Player player) {
         gameTable = new GameTable(this, tableLayoutMain);
-        gameTable.fillTable(players);
+        gameTable.fillTable(players, player);
     }
 
     public void showSchool(Player player) {
@@ -164,7 +170,15 @@ public class MainActivity extends AppCompatActivity {
         game.setCurrentCell(cell);
     }
 
-    public void showPlayerPlace(Player player, int place) {
-        gameTable.setPlayerPlace(player, place);
+    public void showPlayerPlace(Player player) {
+        gameTable.setPlayerPlace(player);
+    }
+
+    public boolean getIsCountTotalEveryMove() {
+        return game.getIsCountTotalEveryMove();
+    }
+
+    public boolean getIsCountPlaceEveryMove() {
+        return game.getIsCountPlaceEveryMove();
     }
 }

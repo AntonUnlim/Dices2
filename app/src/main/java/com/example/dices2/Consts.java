@@ -2,6 +2,11 @@ package com.example.dices2;
 
 import android.graphics.Color;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static com.example.dices2.RowName.*;
 
 public class Consts {
@@ -26,4 +31,6 @@ public class Consts {
     public static final int MAIN_TABLE_FONT_SIZE = 24;
     public static final int MAIN_TABLE_TEXT_COLOR = Color.WHITE;
     public static final int SEPARATOR_HEIGHT = 10;
+    public static List<Cell> allCells = new ArrayList<>();
+    public static Set<Cell> savedCells = new HashSet<>();
 }

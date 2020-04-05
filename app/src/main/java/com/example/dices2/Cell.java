@@ -8,6 +8,7 @@ import java.util.Objects;
 public class Cell extends androidx.appcompat.widget.AppCompatTextView {
     private Player owner;
     private RowName row;
+    private String value;
 
     public Cell(Context context, Player owner, RowName row) {
         super(context);
@@ -26,6 +27,15 @@ public class Cell extends androidx.appcompat.widget.AppCompatTextView {
         return row;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+        setText(value);
+    }
+
     public boolean isEmpty() {
         return getText().equals("") || getText() == null;
     }
@@ -35,8 +45,7 @@ public class Cell extends androidx.appcompat.widget.AppCompatTextView {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cell cell = (Cell) o;
-        return owner.equals(cell.owner) &&
-                row == cell.row;
+        return owner.equals(cell.owner) && row == cell.row;
     }
 
     @Override

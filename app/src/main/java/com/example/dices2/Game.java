@@ -2,6 +2,7 @@ package com.example.dices2;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +23,11 @@ public class Game {
     private int idCurrentPlayer = 0;
     private boolean isGameStarted;
     private Player currentPlayer;
-    private Map<Player, Integer> playersPlaces;
+    //private Map<Player, Integer> playersPlaces;
 
     private Game() {
         players = new ArrayList<>();
+        savedCells = new HashSet<>();
     }
 
     public static Game getInstance() {
@@ -39,7 +41,7 @@ public class Game {
 
     private void startGame() {
         getTotalNumberOfMoves();
-        mainActivity.fillMainTable(players);
+        mainActivity.fillMainTable(players, currentPlayer);
         idCurrentPlayer = 0;
         highlightNextPlayer();
         clearPlayersValues();
@@ -88,7 +90,9 @@ public class Game {
         Player player = currentCell.getOwner();
         RowName rowName = currentCell.getRow();
         player.setValue(rowName, value);
-        setTextToCurrentTextView(value);
+        currentCell.setValue(value);
+        refreshCellsList();
+        //setTextToCurrentTextView(value);
         refreshFullSquarePokerTextViews(player);
         if (isEdit) {
             makeEdit(currentCell);
@@ -120,16 +124,16 @@ public class Game {
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
-        mainActivity.fillMainTable(players);
+        mainActivity.fillMainTable(players, currentPlayer);
     }
 
     public void setCurrentCell(Cell cell) {
         this.currentCell = cell;
     }
 
-    public void setTextToCurrentTextView(String value) {
-        currentCell.setText(value);
-    }
+//    public void setTextToCurrentTextView(String value) {
+//        currentCell.setValue(value);
+//    }
 
     private void showSchool(Player player) {
         mainActivity.showSchool(player);
@@ -145,14 +149,14 @@ public class Game {
         }
     }
 
-    private void showPlayerPlace(Player player, int place) {
-        mainActivity.showPlayerPlace(player, place);
+    private void showPlayerPlace(Player player) {
+        mainActivity.showPlayerPlace(player);
     }
 
     private void showAllPlaces() {
         calcPlaces();
         for (Player player : players) {
-            showPlayerPlace(player, playersPlaces.get(player));
+            showPlayerPlace(player);
         }
     }
 
@@ -232,21 +236,24 @@ public class Game {
     }
 
     private void calcPlaces() {
-        playersPlaces = new LinkedHashMap<>();
+        //playersPlaces = new LinkedHashMap<>();
         List<Player> playersSortedByTotalValue = new ArrayList<>(players);
         Collections.sort(playersSortedByTotalValue, Collections.<Player>reverseOrder());
         Player currentPlayer = playersSortedByTotalValue.get(0);
         int place = 1;
         int currentValue = currentPlayer.getTotal();
-        playersPlaces.put(currentPlayer, place);
+        currentPlayer.setCurPlace(place);
+        //playersPlaces.put(currentPlayer, place);
         for (int i = 1; i < playersSortedByTotalValue.size(); i++) {
             Player nextPlayer = playersSortedByTotalValue.get(i);
             if (currentValue == nextPlayer.getTotal()) {
-                playersPlaces.put(nextPlayer, place);
+                //playersPlaces.put(nextPlayer, place);
+                nextPlayer.setCurPlace(place);
             } else {
                 place++;
                 currentValue = nextPlayer.getTotal();
-                playersPlaces.put(nextPlayer, place);
+                //playersPlaces.put(nextPlayer, place);
+                nextPlayer.setCurPlace(place);
             }
         }
     }
@@ -262,5 +269,17 @@ public class Game {
             }
         }
         return false;
+    }
+
+    private void refreshCellsList() {
+        savedCells.add(currentCell);
+    }
+
+    public boolean getIsCountTotalEveryMove() {
+        return isCountTotalEveryMove;
+    }
+
+    public boolean getIsCountPlaceEveryMove() {
+        return isCountPlaceEveryMove;
     }
 }
