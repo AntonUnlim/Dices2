@@ -5,4 +5,5 @@
     android:singleLine="true"
     android:padding="5sp"
     android:textColor="@color/white"
-    android:background="@color/colorBackgroundDark" />
+    android:background="@color/colorBackgroundDark"
+    android:textSize="@dimen/main_font_size"/>

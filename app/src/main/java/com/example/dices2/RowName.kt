@@ -1,6 +1,6 @@
-package com.example.dices2;
+package com.example.dices2
 
-public enum RowName {
+enum class RowName(private val _name: String?) {
     NAMES(null),
     ONE("1"),
     TWO("2"),
@@ -23,13 +23,5 @@ public enum RowName {
     TOTAL("Итого"),
     PLACE("Место");
 
-    private String name;
-
-    RowName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    fun getName() = _name
 }

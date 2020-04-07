@@ -4,6 +4,7 @@
     <!--Fonts-->
     <dimen name="main_table_font_size">16sp</dimen>
     <dimen name="main_font_size">32sp</dimen>
+    <dimen name="settings_font_size">24sp</dimen>
     <dimen name="keyboard_font_size">64sp</dimen>
     <dimen name="keyboard_cancel_font_size">32sp</dimen>
 </resources>

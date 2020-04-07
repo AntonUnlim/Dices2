@@ -9,11 +9,12 @@
     <string name="name_cannot_be_empty">Имя не может быть пустым</string>
     <string name="cancel">Отмена</string>
     <string name="settings">Настройки</string>
-    <string name="count_total_every_move">Считать Итого после каждого хода</string>
-    <string name="game_settings">Настройки игры</string>
+
     <string name="save">Сохранить</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="game_settings">Настройки игры</string>
     <string name="count_place_every_move">Считать Место после каждого хода</string>
+    <string name="count_total_every_move">Считать Итого после каждого хода</string>
+    <string name="keep_screen_on">Не выключать экран во время игры</string>
 </resources>
