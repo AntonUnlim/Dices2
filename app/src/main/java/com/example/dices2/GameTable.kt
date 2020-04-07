@@ -304,11 +304,13 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
 
     fun highlightPlayersMove(player: Player?) {
         val cellToHighlight: List<Cell>? = playersCellsMap[player]
-        for (cell in cellToHighlight!!) {
-            if (cell.isEmpty) {
-                enableTextView(cell, true)
-            } else {
-                enableTextView(cell, false)
+        cellToHighlight?.let {
+            for (cell in cellToHighlight) {
+                if (cell.isEmpty) {
+                    enableTextView(cell, true)
+                } else {
+                    enableTextView(cell, false)
+                }
             }
         }
     }
@@ -340,7 +342,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         return View.OnLongClickListener { v ->
             val cell = v as Cell
             mainActivity.setClickedCell(cell)
-            mainActivity!!.startKeyboardActivityForEdit(v.text.toString(), cell.row)
+            mainActivity.startKeyboardActivityForEdit(cell)
             true
         }
     }

@@ -10,8 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dices2.databinding.ActivityListBinding
@@ -72,7 +70,7 @@ class ListActivity : AppCompatActivity() {
         alertDialogBuilder.setTitle("Очистить список")
         alertDialogBuilder.setMessage("Вы уверены, что хотите очистить список игроков?")
         alertDialogBuilder.setNegativeButton("Нет", null)
-        alertDialogBuilder.setPositiveButton("Да") { dialog, which -> game!!.clearListOfPlayers() }
+        alertDialogBuilder.setPositiveButton("Да") { dialog, which -> game!!.clearListOfPlayersAndRefreshListView() }
         alertDialogBuilder.show()
     }
 

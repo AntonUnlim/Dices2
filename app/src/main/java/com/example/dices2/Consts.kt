@@ -24,4 +24,5 @@ object Consts {
     const val APP_PREFERENCES_TOTAL = "total"
     const val APP_PREFERENCES_PLACE = "place"
     const val APP_PREFERENCES_SCREEN = "screen"
+    const val APP_PREFERENCES_PLAYERS = "players"
 }

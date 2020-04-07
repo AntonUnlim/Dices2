@@ -11,6 +11,7 @@ class Cell(context: Context?, val owner: Player, val row: RowName) : AppCompatTe
             field = value
             text = value
         }
+    get() = if (field == null) "" else field
 
     val isEmpty: Boolean
         get() = text == "" || text == null

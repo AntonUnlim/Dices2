@@ -33,18 +33,26 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (pref.contains(Consts.APP_PREFERENCES_TOTAL)) {
-            game.isCountTotalEveryMove = pref.getBoolean(Consts.APP_PREFERENCES_TOTAL, false);
-        }
+        if (!game.isGameStarted) {
+            if (pref.contains(Consts.APP_PREFERENCES_TOTAL)) {
+                game.isCountTotalEveryMove = pref.getBoolean(Consts.APP_PREFERENCES_TOTAL, false)
+            }
 
-        if (pref.contains(Consts.APP_PREFERENCES_PLACE)) {
-            game.isCountPlaceEveryMove = pref.getBoolean(Consts.APP_PREFERENCES_PLACE, false);
-        }
+            if (pref.contains(Consts.APP_PREFERENCES_PLACE)) {
+                game.isCountPlaceEveryMove = pref.getBoolean(Consts.APP_PREFERENCES_PLACE, false)
+            }
 
-        if (pref.contains(Consts.APP_PREFERENCES_SCREEN)) {
-            game.isKeelScreenOn = pref.getBoolean(Consts.APP_PREFERENCES_SCREEN, false);
-            if (game.isKeelScreenOn) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            if (pref.contains(Consts.APP_PREFERENCES_SCREEN)) {
+                game.isKeelScreenOn = pref.getBoolean(Consts.APP_PREFERENCES_SCREEN, false)
+                if (game.isKeelScreenOn) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+
+            if (pref.contains(Consts.APP_PREFERENCES_PLAYERS)) {
+                game.fillStartPlayers(pref.getStringSet(Consts.APP_PREFERENCES_PLAYERS, HashSet<String>()))
             }
         }
     }
@@ -88,14 +96,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
-            alertDialogBuilder.setTitle("Выход")
-            alertDialogBuilder.setMessage("Вы уверены, что хотите выйти?")
-            alertDialogBuilder.setNegativeButton("Нет", null)
-            alertDialogBuilder.setPositiveButton("Да") { dialog, which -> finish() }
-            alertDialogBuilder.show()
+            if (game.isGameStarted) {
+                val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
+                alertDialogBuilder.setTitle("Выход")
+                alertDialogBuilder.setMessage("Вы уверены, что хотите выйти?")
+                alertDialogBuilder.setNegativeButton("Нет", null)
+                alertDialogBuilder.setPositiveButton("Да") { dialog, which -> exit() }
+                alertDialogBuilder.show()
+            } else {
+                exit()
+            }
         }
         return false
+    }
+
+    private fun exit() {
+        //game.clearListOfPlayers()
+        game.isGameStarted = false
+        game.savePlayers(pref)
+        finish()
     }
 
     fun fillMainTable(players: List<Player>?, player: Player?) {
@@ -119,11 +138,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startKeyboardActivityForEdit(editedValue: String?, rowName: RowName?) {
+    fun startKeyboardActivityForEdit(cell: Cell) {
         val intent = Intent(this, KeyboardActivity::class.java)
-        intent.putExtra(Consts.INTENT_EDITED_VALUE, editedValue)
-        intent.putExtra(Consts.INTENT_ROW_NAME, rowName?.getName())
+        intent.putExtra(Consts.INTENT_EDITED_VALUE, cell.value)
+        intent.putExtra(Consts.INTENT_ROW_NAME, cell.row.getName())
         intent.putExtra(Consts.INTENT_IS_EDIT, true)
+        intent.putExtra(Consts.INTENT_IS_IN_SCHOOL, gameTable?.isCellInSchool(cell))
         startActivityForResult(intent, 1)
     }
 

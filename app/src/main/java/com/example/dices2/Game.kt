@@ -1,5 +1,6 @@
 package com.example.dices2
 
+import android.content.SharedPreferences
 import java.util.*
 
 class Game private constructor() {
@@ -15,7 +16,6 @@ class Game private constructor() {
     private val totalNumberOfRows = 16
     private var idCurrentPlayer = 0
     var isGameStarted = false
-        private set
     private var currentPlayer: Player? = null
 
     init {
@@ -162,9 +162,13 @@ class Game private constructor() {
         listActivity!!.refreshListView(players)
     }
 
+    fun clearListOfPlayersAndRefreshListView() {
+        clearListOfPlayers()
+        listActivity!!.refreshListView(players)
+    }
+
     fun clearListOfPlayers() {
         players.clear()
-        listActivity!!.refreshListView(players)
     }
 
     fun getNameOfPlayerByPosition(position: Int): String? {
@@ -180,12 +184,6 @@ class Game private constructor() {
     private fun getTotalNumberOfMoves(): Int {
         return players.size * totalNumberOfRows.also { totalNumberOfMoves = it }
     }
-
-//    fun onEditMenuClicked() {
-//        val cell = currentCell
-//        val rowName = cell?.row
-//        mainActivity!!.startKeyboardActivityForEdit(currentCell!!.text.toString(), rowName)
-//    }
 
     fun isDuplicatePlayer(name: String): Boolean {
         for (player in players) {
@@ -234,6 +232,31 @@ class Game private constructor() {
     fun getIsCountPlaceEveryMove() = isCountPlaceEveryMove
 
     fun getIsKeepScreenOn() = isKeelScreenOn
+
+    fun savePlayers(pref: SharedPreferences) {
+        val editor = pref.edit()
+        val playersSet = getPlayersSet()
+        editor.putStringSet(Consts.APP_PREFERENCES_PLAYERS, playersSet)
+        editor.apply()
+    }
+
+    private fun getPlayersSet(): MutableSet<String> {
+        val set = HashSet<String>()
+        players.forEach { set.add(it.name) }
+        return set
+    }
+
+    fun fillStartPlayers(playersSet: Set<String>?) {
+        playersSet?.let {
+            players.clear()
+            playersSet.forEach {
+                players.add(Player(it))
+            }
+        }
+        if (players.size > 0) {
+            startGame()
+        }
+    }
 
     private object HOLDER {
         val INSTANCE = Game()
