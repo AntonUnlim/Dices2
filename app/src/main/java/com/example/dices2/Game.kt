@@ -28,12 +28,12 @@ class Game private constructor() {
 
     // Ход игры
     private fun startGame() {
+        isGameStarted = true
         getTotalNumberOfMoves()
         Consts.savedCells.clear()
         clearPlayersValues()
         idCurrentPlayer = 0
         currentPlayer = players[idCurrentPlayer]
-        isGameStarted = true
         mainActivity!!.fillMainTable(players, currentPlayer)
         highlightNextPlayer()
     }
@@ -181,8 +181,8 @@ class Game private constructor() {
 
     // Прочее
 
-    private fun getTotalNumberOfMoves(): Int {
-        return players.size * totalNumberOfRows.also { totalNumberOfMoves = it }
+    private fun getTotalNumberOfMoves() {
+        totalNumberOfMoves = players.size * totalNumberOfRows
     }
 
     fun isDuplicatePlayer(name: String): Boolean {

@@ -52,7 +52,7 @@ class Player(val name: String) : Comparable<Player> {
         get() {
             var count = 0
             for (schoolClass in Consts.NAMES_OF_SCHOOL_ROWS) {
-                if (values[schoolClass] != null && values[schoolClass] != 0) {
+                if (values[schoolClass] != null) {
                     count++
                 }
             }
