@@ -94,7 +94,7 @@ class Game private constructor() {
         }
         if (isGameOver) {
             showAllTotals()
-            isGameStarted = false
+            //isGameStarted = false
             showAllPlaces()
         }
     }

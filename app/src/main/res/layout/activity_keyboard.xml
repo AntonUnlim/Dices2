@@ -46,6 +46,7 @@
             android:src="@drawable/ic_backspace_black_24dp"
             android:layout_width="100dp"
             android:layout_height="0dp"
+            android:scaleType="fitCenter"
             app:layout_constraintTop_toTopOf="@id/tv_keyboard_result"
             app:layout_constraintBottom_toBottomOf="@id/tv_keyboard_result"
             app:layout_constraintStart_toEndOf="@id/tv_keyboard_result"
