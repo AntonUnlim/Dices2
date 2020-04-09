@@ -1,11 +1,19 @@
 package com.example.dices2
 
 import android.content.Context
+import android.graphics.Color
 import android.view.Gravity
 import androidx.appcompat.widget.AppCompatTextView
 import java.util.*
 
-class Cell(context: Context?, val owner: Player, val row: RowName) : AppCompatTextView(context) {
+class Cell(context: Context, val owner: Player, val row: RowName) : AppCompatTextView(context) {
+
+    init {
+        setTextColor(Consts.MAIN_TABLE_TEXT_COLOR)
+        gravity = Gravity.CENTER_HORIZONTAL
+        textSize = Consts.MAIN_TABLE_FONT_SIZE.toFloat()
+    }
+
     var value: String? = null
         set(value) {
             field = value
@@ -14,7 +22,7 @@ class Cell(context: Context?, val owner: Player, val row: RowName) : AppCompatTe
     get() = if (field == null) "" else field
 
     val isEmpty: Boolean
-        get() = text == "" || text == null
+        get() = text == "" || text == null || text == row.getName()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -27,9 +35,5 @@ class Cell(context: Context?, val owner: Player, val row: RowName) : AppCompatTe
         return Objects.hash(owner, row)
     }
 
-    init {
-        setTextColor(Consts.MAIN_TABLE_TEXT_COLOR)
-        gravity = Gravity.CENTER_HORIZONTAL
-        textSize = Consts.MAIN_TABLE_FONT_SIZE.toFloat()
-    }
+
 }

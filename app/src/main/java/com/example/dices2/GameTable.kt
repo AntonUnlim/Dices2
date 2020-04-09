@@ -10,7 +10,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import java.util.*
 
-class GameTable(private val mainActivity: MainActivity, private val mainTable: TableLayout?) {
+class GameTable(private val mainActivity: MainActivity, private val mainTable: TableLayout) {
     private val SCHOOL_ROWS = arrayOf(RowName.ONE, RowName.TWO, RowName.THREE, RowName.FOUR, RowName.FIVE, RowName.SIX)
     private val FIRST_NON_SCHOOL_PART_ROWS = arrayOf(RowName.PAIR, RowName.TWO_PLUS_TWO, RowName.TRIANGLE, RowName.SMALL, RowName.BIG)
     private val FULL_SQUARE_POKER_ROWS = arrayOf(RowName.FULL, RowName.SQUARE, RowName.POKER)
@@ -19,7 +19,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private val totalTextViewsMap: MutableMap<Player, Cell>
     private val playersCellsMap: MutableMap<Player, MutableList<Cell>>
     private val playersFullSquarePokerCellsMap: MutableMap<Player, MutableList<Cell>>
-    private var players: List<Player>? = null
+    private lateinit var players: List<Player>
     private val FONT_COLOR = Consts.MAIN_TABLE_TEXT_COLOR
     private val backgroundDarkGray: Drawable
     private val backgroundLightGray: Drawable
@@ -32,6 +32,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private val placeTextViewsMap: MutableMap<Player, Cell>
 
     init {
+        // TODO getDrawable() is deprecated
         backgroundDarkGray = mainActivity.resources.getDrawable(R.drawable.text_view_back_dark_gray)
         backgroundLightGray = mainActivity.resources.getDrawable(R.drawable.text_view_back_light_gray)
         backgroundRed = mainActivity.resources.getDrawable(R.drawable.text_view_back_red)
@@ -45,9 +46,9 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         playersFullSquarePokerCellsMap = HashMap()
     }
 
-    fun fillTable(players: List<Player>?, player: Player?) {
+    fun fillTable(players: List<Player>, player: Player?) {
         this.players = players
-        mainTable!!.removeAllViews()
+        mainTable.removeAllViews()
         Consts.allCells.clear()
         fillNamesRow()
         //addSeparatorRow();
@@ -62,27 +63,27 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         fillTotalRows()
         fillPlaceRow()
         fillSavedValues()
-        player?.let { highlightPlayersMove(it) }
+        player?.let { highlightPlayersMove(player = player) }
     }
 
     private fun fillSavedValues() {
-        Consts.savedCells.forEach { savedCell ->
-            Consts.allCells.forEach { cell ->
+        Consts.savedCells.filterNotNull().forEach { savedCell ->
+            Consts.allCells.filterNotNull().forEach { cell ->
                 if (savedCell == cell) {
-                    cell?.value = savedCell?.value
-                    mainActivity.setTextViewHighlight(cell, true)
-                    enableTextView(cell, false)
+                    cell.value = savedCell.value
+                    mainActivity.setTextViewHighlight(currentCell = cell, isHighlight = true)
+                    enableTextView(cell = cell, isEnabled = false)
                 }
             }
         }
 
-        players!!.forEach {
-            setSchoolValue(it)
+        players.forEach {
+            setSchoolValue(player = it)
             if (mainActivity.isCountTotalEveryMove) {
-                setTotalValue(it)
+                setTotalValue(player = it)
             }
             if (mainActivity.isCountPlaceEveryMove) {
-                setPlayerPlace(it)
+                setPlayerPlace(player = it)
             }
         }
     }
@@ -90,13 +91,13 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private fun fillNamesRow() {
         val tableRow = createTableRow()
         tableRow.addView(createNameOfRowTextView())
-        for (player in players!!) {
+        for (player in players) {
             val textView = createNameOfPlayerTextView()
             textView.text = player.name
             playersNamesTextViews[player] = textView
             tableRow.addView(textView)
         }
-        mainTable!!.addView(tableRow)
+        mainTable.addView(tableRow)
     }
 
     private fun fillSchoolRows() {
@@ -105,8 +106,8 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             val textView = createNameOfRowTextView()
             textView.text = rowName.getName()
             tableRow.addView(textView)
-            fillRowWithClickableCells(tableRow, rowName)
-            mainTable!!.addView(tableRow)
+            fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
+            mainTable.addView(tableRow)
         }
     }
 
@@ -115,13 +116,13 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         val nameOfRowTextView = createNameOfRowTextView()
         nameOfRowTextView.text = RowName.SCHOOL.getName()
         tableRow.addView(nameOfRowTextView)
-        for (player in players!!) {
-            val cell = createNonClickableCell(player, RowName.SCHOOL)
+        for (player in players) {
+            val cell = createNonClickableCell(player = player, rowName = RowName.SCHOOL)
             tableRow.addView(cell)
             schoolTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable!!.addView(tableRow)
+        mainTable.addView(tableRow)
     }
 
     private fun addSeparatorRow() {
@@ -129,11 +130,11 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         val layoutParams = TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.5f)
         tableRow.layoutParams = layoutParams
         tableRow.addView(createNameOfRowTextView())
-        for (player in players!!) {
+        for (player in players) {
             val textView = createNameOfPlayerTextView()
             tableRow.addView(textView)
         }
-        mainTable!!.addView(tableRow)
+        mainTable.addView(tableRow)
     }
 
     private fun fillFirstNonSchoolPart() {
@@ -142,8 +143,8 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             val textView = createNameOfRowTextView()
             textView.text = rowName.getName()
             tableRow.addView(textView)
-            fillRowWithClickableCells(tableRow, rowName)
-            mainTable!!.addView(tableRow)
+            fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
+            mainTable.addView(tableRow)
         }
     }
 
@@ -153,8 +154,8 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             val textView = createNameOfRowTextView()
             textView.text = rowName.getName()
             tableRow.addView(textView)
-            fillRowWithNonClickableCells(tableRow, rowName)
-            mainTable!!.addView(tableRow)
+            fillRowWithNonClickableCells(tableRow = tableRow, rowName = rowName)
+            mainTable.addView(tableRow)
         }
     }
 
@@ -164,8 +165,8 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             val textView = createNameOfRowTextView()
             textView.text = rowName.getName()
             tableRow.addView(textView)
-            fillRowWithClickableCells(tableRow, rowName)
-            mainTable!!.addView(tableRow)
+            fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
+            mainTable.addView(tableRow)
         }
     }
 
@@ -174,13 +175,13 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         val nameOfRowTextView = createNameOfRowTextView()
         nameOfRowTextView.text = RowName.TOTAL.getName()
         tableRow.addView(nameOfRowTextView)
-        for (player in players!!) {
-            val cell = createNonClickableCell(player, RowName.TOTAL)
+        for (player in players) {
+            val cell = createNonClickableCell(player = player, rowName = RowName.TOTAL)
             tableRow.addView(cell)
             totalTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable!!.addView(tableRow)
+        mainTable.addView(tableRow)
     }
 
     private fun fillPlaceRow() {
@@ -188,39 +189,39 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         val placeTextView = createNameOfRowTextView()
         placeTextView.text = RowName.PLACE.getName()
         placeTableRow.addView(placeTextView)
-        for (player in players!!) {
-            val cell = createNonClickableCell(player, RowName.PLACE)
+        for (player in players) {
+            val cell = createNonClickableCell(player = player, rowName = RowName.PLACE)
             placeTableRow.addView(cell)
             placeTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable!!.addView(placeTableRow)
+        mainTable.addView(placeTableRow)
     }
 
     private fun fillRowWithClickableCells(tableRow: TableRow, rowName: RowName) {
-        for (player in players!!) {
+        for (player in players) {
             val cell = Cell(mainActivity, player, rowName)
             cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
             cell.gravity = Gravity.CENTER
             cell.background = backgroundDarkGray
             cell.setOnClickListener(createOnClickListener())
             cell.setOnLongClickListener(createOnLongClickListener())
-            setMutualParams(cell)
-            mainActivity.registerForContextMenu(cell)
+            setMutualParams(textView = cell)
+            //mainActivity.registerForContextMenu(cell)
             tableRow.addView(cell)
-            fillPlayersCellsMap(player, cell)
+            fillPlayersCellsMap(player = player, cell = cell)
             Consts.allCells.add(cell)
         }
     }
 
     private fun fillRowWithNonClickableCells(tableRow: TableRow, rowName: RowName) {
-        for (player in players!!) {
-            val cell = Cell(mainActivity, player, rowName)
+        for (player in players) {
+            val cell = Cell(context = mainActivity, owner = player, row = rowName)
             cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
             cell.gravity = Gravity.CENTER
             cell.background = backgroundDarkGray
-            setMutualParams(cell)
-            mainActivity.registerForContextMenu(cell)
+            setMutualParams(textView = cell)
+            //mainActivity.registerForContextMenu(cell)
             tableRow.addView(cell)
             Consts.allCells.add(cell)
             if (playersFullSquarePokerCellsMap[player] == null) {
@@ -228,7 +229,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
                 cells.add(cell)
                 playersFullSquarePokerCellsMap[player] = cells
             } else {
-                playersFullSquarePokerCellsMap[player]!!.add(cell)
+                playersFullSquarePokerCellsMap[player]?.add(cell)
             }
         }
     }
@@ -239,7 +240,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             cells.add(cell)
             playersCellsMap[player] = cells
         } else {
-            playersCellsMap[player]!!.add(cell)
+            playersCellsMap[player]?.add(cell)
         }
     }
 
@@ -256,7 +257,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         textView.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
         textView.gravity = Gravity.CENTER_VERTICAL
         textView.setPadding(LEFT_RIGHT_TEXTVIEW_PADDING, 0, LEFT_RIGHT_TEXTVIEW_PADDING, 0)
-        setMutualParams(textView)
+        setMutualParams(textView = textView)
         return textView
     }
 
@@ -265,7 +266,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         textView.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
         textView.gravity = Gravity.CENTER
         textView.background = backgroundDarkGray
-        setMutualParams(textView)
+        setMutualParams(textView = textView)
         return textView
     }
 
@@ -274,7 +275,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
         cell.gravity = Gravity.CENTER
         cell.background = backgroundDarkGray
-        setMutualParams(cell)
+        setMutualParams(textView = cell)
         return cell
     }
 
@@ -283,23 +284,25 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         textView.setTextColor(FONT_COLOR)
     }
 
-    fun setSchoolValue(player: Player?) {
+    fun setSchoolValue(player: Player) {
         val cell = schoolTextViewsMap[player]
-        val schoolValue = player?.school
+        val schoolValue = player.school
         cell?.value = schoolValue.toString()
-        schoolValue?.let {
-            if (schoolValue < 0) {
-                cell!!.background = backgroundRed
-            } else if (player!!.isSchoolFinished) {
-                cell!!.background = backgroundGreen
-            } else {
-                cell!!.background = backgroundDarkGray
+        when {
+            schoolValue < 0 -> {
+                cell?.background = backgroundRed
+            }
+            player.isSchoolFinished -> {
+                cell?.background = backgroundGreen
+            }
+            else -> {
+                cell?.background = backgroundDarkGray
             }
         }
     }
 
-    fun setTotalValue(player: Player?) {
-        totalTextViewsMap[player]?.value = player?.total.toString()
+    fun setTotalValue(player: Player) {
+        totalTextViewsMap[player]?.value = player.total.toString()
     }
 
     fun highlightPlayersMove(player: Player?) {
@@ -307,19 +310,19 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         cellToHighlight?.let {
             for (cell in cellToHighlight) {
                 if (cell.isEmpty) {
-                    enableTextView(cell, true)
+                    enableTextView(cell = cell, isEnabled = true)
                 } else {
-                    enableTextView(cell, false)
+                    enableTextView(cell = cell, isEnabled = false)
                 }
             }
         }
     }
 
-    fun switchOffPlayersMove(player: Player?) {
+    fun switchOffPlayersMove(player: Player) {
         val cellToSwitchOff: List<Cell>? = playersCellsMap[player]
         for (cell in cellToSwitchOff!!) {
             if (cell.isEmpty) {
-                enableTextView(cell, false)
+                enableTextView(cell = cell, isEnabled = false)
             }
         }
     }
@@ -328,11 +331,11 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         return View.OnClickListener { v ->
             val cell = v as Cell
             if (cell.isEmpty) {
-                mainActivity.setClickedCell(cell)
+                mainActivity.setClickedCell(cell = cell)
                 val intent = Intent(mainActivity, KeyboardActivity::class.java)
                 intent.putExtra(Consts.INTENT_ROW_NAME, cell.row.getName())
                 intent.putExtra(Consts.INTENT_IS_EDIT, false)
-                intent.putExtra(Consts.INTENT_IS_IN_SCHOOL, isCellInSchool(cell))
+                intent.putExtra(Consts.INTENT_IS_IN_SCHOOL, isCellInSchool(cell = cell))
                 mainActivity.startActivityForResult(intent, 1)
             }
         }
@@ -341,42 +344,43 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private fun createOnLongClickListener(): View.OnLongClickListener {
         return View.OnLongClickListener { v ->
             val cell = v as Cell
-            mainActivity.setClickedCell(cell)
-            mainActivity.startKeyboardActivityForEdit(cell)
+            mainActivity.setClickedCell(cell = cell)
+            mainActivity.startKeyboardActivityForEdit(cell = cell)
             true
         }
     }
 
-    fun enableTextView(cell: Cell?, isEnabled: Boolean) {
+    private fun enableTextView(cell: Cell, isEnabled: Boolean) {
         if (isEnabled) {
-            cell!!.background = backgroundHighlightedBorders
+            cell.background = backgroundHighlightedBorders
             cell.setOnClickListener(createOnClickListener())
+            cell.setOnLongClickListener(createOnLongClickListener())
         } else {
-            cell?.let {
-                if (cell.isEmpty) {
-                    cell.background = backgroundDarkGray
-                } else {
-                    cell.background = backgroundLightGray
-                }
+            if (cell.isEmpty) {
+                cell.background = backgroundDarkGray
+            } else {
+                cell.background = backgroundLightGray
+            }
+            cell.setOnClickListener(null)
+        }
+    }
+
+    fun enableAfterThreeClassesTextViews(player: Player) {
+        val cells: List<Cell>? = playersFullSquarePokerCellsMap[player]
+        cells?.let { playersCellsMap[player]?.addAll(cells) }
+        player.isSecondNonSchoolPartAdded = true
+    }
+
+    fun disableAfterThreeClassesTextViews(player: Player) {
+        val cells: List<Cell>? = playersFullSquarePokerCellsMap[player]
+        cells?.let {
+            playersCellsMap[player]?.removeAll { it in cells }
+            for (cell in cells) {
                 cell.setOnClickListener(null)
+                cell.background = backgroundDarkGray
             }
         }
-    }
-
-    fun enableAfterThreeClassesTextViews(player: Player?) {
-        val cells: List<Cell>? = playersFullSquarePokerCellsMap[player]
-        playersCellsMap[player]!!.addAll(cells!!)
-        player?.isSecondNonSchoolPartAdded = true
-    }
-
-    fun disableAfterThreeClassesTextViews(player: Player?) {
-        val cells: List<Cell>? = playersFullSquarePokerCellsMap[player]
-        playersCellsMap[player]?.removeAll { it in cells!! }
-        player?.isSecondNonSchoolPartAdded = false
-        for (cell in cells!!) {
-            cell.setOnClickListener(null)
-            cell.background = backgroundDarkGray
-        }
+        player.isSecondNonSchoolPartAdded = false
     }
 
     fun isCellInSchool(cell: Cell): Boolean {

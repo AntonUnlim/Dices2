@@ -1,8 +1,10 @@
 package com.example.dices2
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +13,9 @@ import com.example.dices2.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
     private lateinit var game: Game
-    private var gameTable: GameTable? = null
-
-    lateinit var pref: SharedPreferences
+    private lateinit var gameTable: GameTable
+    private lateinit var pref: SharedPreferences
 
     // TODO поиграться с цветами
 
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         pref = getSharedPreferences(Consts.APP_PREFERENCES, MODE_PRIVATE)
 
         game = Game.instance
-        game.setMainActivity(this)
+        game.setMainActivity(mainActivity = this)
     }
 
     override fun onResume() {
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (pref.contains(Consts.APP_PREFERENCES_PLAYERS)) {
-                game.fillStartPlayers(pref.getStringSet(Consts.APP_PREFERENCES_PLAYERS, HashSet<String>()))
+                game.fillStartPlayers(playersSet = pref.getStringSet(Consts.APP_PREFERENCES_PLAYERS, HashSet<String>()))
             }
         }
     }
@@ -67,10 +67,10 @@ class MainActivity : AppCompatActivity() {
             R.id.new_game -> {
                 if (game.isGameStarted) {
                     val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
-                    alertDialogBuilder.setTitle("Прервать игру")
-                    alertDialogBuilder.setMessage("Вы уверены, что хотите прервать текущую игру?")
-                    alertDialogBuilder.setNegativeButton("Нет", null)
-                    alertDialogBuilder.setPositiveButton("Да") { dialog, which -> startListActivity() }
+                    alertDialogBuilder.setTitle(getString(R.string.break_game))
+                    alertDialogBuilder.setMessage(getString(R.string.are_you_sure_to_break_game))
+                    alertDialogBuilder.setNegativeButton(getString(R.string.no), null)
+                    alertDialogBuilder.setPositiveButton(getString(R.string.yes)) { _, _ -> startListActivity() }
                     alertDialogBuilder.show()
                 } else {
                     startListActivity()
@@ -89,7 +89,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
-        val value = data.getStringExtra(Consts.INTENT_INPUT_VALUE)
+        var value = ""
+        data.getStringExtra(Consts.INTENT_INPUT_VALUE)?.let { value = it }
         val isEdit = data.getBooleanExtra(Consts.INTENT_IS_EDIT, false)
         game.okButtonOnKeyboardActivityClicked(value = value, isEdit = isEdit)
     }
@@ -97,12 +98,18 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (game.isGameStarted) {
+
                 val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
-                alertDialogBuilder.setTitle("Выход")
-                alertDialogBuilder.setMessage("Вы уверены, что хотите выйти?")
-                alertDialogBuilder.setNegativeButton("Нет", null)
-                alertDialogBuilder.setPositiveButton("Да") { dialog, which -> exit() }
-                alertDialogBuilder.show()
+                alertDialogBuilder.setTitle(getString(R.string.exit))
+                alertDialogBuilder.setMessage(getString(R.string.are_you_sure_to_exit))
+                alertDialogBuilder.setNegativeButton(getString(R.string.no), null)
+                alertDialogBuilder.setPositiveButton(getString(R.string.yes)) { _, _ -> exit() }
+                //alertDialogBuilder.create()
+                val dialog = alertDialogBuilder.create()
+                dialog.show()
+                dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.no, resources.newTheme()))
+                dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.yes, resources.newTheme()))
+                dialog.getButton(Dialog.BUTTON_POSITIVE).textSize = 24f
             } else {
                 exit()
             }
@@ -111,30 +118,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun exit() {
-        //game.clearListOfPlayers()
         game.isGameStarted = false
-        game.savePlayers(pref)
+        game.savePlayers(pref = pref)
         finish()
     }
 
-    fun fillMainTable(players: List<Player>?, player: Player?) {
+    fun fillMainTable(players: List<Player>, player: Player?) {
         gameTable = GameTable(mainActivity = this, mainTable = binding.tlMain)
-        gameTable!!.fillTable(players, player)
+        gameTable.fillTable(players = players, player = player)
     }
 
-    fun showSchool(player: Player?) {
-        gameTable!!.setSchoolValue(player)
+    fun showSchool(player: Player) {
+        gameTable.setSchoolValue(player = player)
     }
 
-    fun showTotal(player: Player?) {
-        gameTable!!.setTotalValue(player)
+    fun showTotal(player: Player) {
+        gameTable.setTotalValue(player = player)
     }
 
-    fun setTextViewHighlight(currentCell: Cell?, isHighlight: Boolean) {
+    fun setTextViewHighlight(currentCell: Cell, isHighlight: Boolean) {
         if (isHighlight) {
-            currentCell!!.background = resources.getDrawable(R.drawable.text_view_back_light_gray)
+            // TODO getDrawable deprecated
+            currentCell.background = resources.getDrawable(R.drawable.text_view_back_light_gray)
         } else {
-            currentCell!!.background = resources.getDrawable(R.drawable.text_view_back_dark_gray)
+            currentCell.background = resources.getDrawable(R.drawable.text_view_back_dark_gray)
         }
     }
 
@@ -143,32 +150,32 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(Consts.INTENT_EDITED_VALUE, cell.value)
         intent.putExtra(Consts.INTENT_ROW_NAME, cell.row.getName())
         intent.putExtra(Consts.INTENT_IS_EDIT, true)
-        intent.putExtra(Consts.INTENT_IS_IN_SCHOOL, gameTable?.isCellInSchool(cell))
+        intent.putExtra(Consts.INTENT_IS_IN_SCHOOL, gameTable.isCellInSchool(cell = cell))
         startActivityForResult(intent, 1)
     }
 
     fun highlightPlayersMove(player: Player?) {
-        gameTable!!.highlightPlayersMove(player)
+        gameTable.highlightPlayersMove(player = player)
     }
 
-    fun switchOffPlayersMove(player: Player?) {
-        gameTable!!.switchOffPlayersMove(player)
+    fun switchOffPlayersMove(player: Player) {
+        gameTable.switchOffPlayersMove(player = player)
     }
 
-    fun enableFullSquarePokerTextViews(player: Player?) {
-        gameTable!!.enableAfterThreeClassesTextViews(player)
+    fun enableFullSquarePokerTextViews(player: Player) {
+        gameTable.enableAfterThreeClassesTextViews(player = player)
     }
 
-    fun disableFullSquarePokerTextViews(player: Player?) {
-        gameTable!!.disableAfterThreeClassesTextViews(player)
+    fun disableFullSquarePokerTextViews(player: Player) {
+        gameTable.disableAfterThreeClassesTextViews(player = player)
     }
 
-    fun setClickedCell(cell: Cell?) {
-        game.setCurrentCell(cell)
+    fun setClickedCell(cell: Cell) {
+        game.setCurrentCell(cell = cell)
     }
 
     fun showPlayerPlace(player: Player) {
-        gameTable!!.setPlayerPlace(player)
+        gameTable.setPlayerPlace(player = player)
     }
 
     val isCountTotalEveryMove: Boolean

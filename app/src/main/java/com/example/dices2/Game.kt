@@ -4,10 +4,10 @@ import android.content.SharedPreferences
 import java.util.*
 
 class Game private constructor() {
-    private var mainActivity: MainActivity? = null
-    private var listActivity: ListActivity? = null
-    private val players: MutableList<Player>
-    private var currentCell: Cell? = null
+    private lateinit var mainActivity: MainActivity
+    private lateinit var listActivity: ListActivity
+    private var players: MutableList<Player> = ArrayList()
+    private lateinit var currentCell: Cell
     var isCountTotalEveryMove = false
     var isCountPlaceEveryMove = false
     var isKeelScreenOn = true
@@ -19,7 +19,6 @@ class Game private constructor() {
     private var currentPlayer: Player? = null
 
     init {
-        players = ArrayList()
         Consts.savedCells = HashSet()
     }
 
@@ -34,7 +33,7 @@ class Game private constructor() {
         clearPlayersValues()
         idCurrentPlayer = 0
         currentPlayer = players[idCurrentPlayer]
-        mainActivity!!.fillMainTable(players, currentPlayer)
+        mainActivity.fillMainTable(players = players, player = currentPlayer)
         highlightNextPlayer()
     }
 
@@ -50,44 +49,44 @@ class Game private constructor() {
         idCurrentPlayer = if (idCurrentPlayer > playersAmount - 1) 0 else idCurrentPlayer
         val idHighlightOff = if (idCurrentPlayer == 0) playersAmount - 1 else idCurrentPlayer - 1
         val idHighlightOn = if (idCurrentPlayer > playersAmount - 1) 0 else idCurrentPlayer
-        mainActivity!!.switchOffPlayersMove(players[idHighlightOff])
+        mainActivity.switchOffPlayersMove(player = players[idHighlightOff])
         currentPlayer = players[idHighlightOn]
-        mainActivity!!.highlightPlayersMove(players[idHighlightOn])
+        mainActivity.highlightPlayersMove(player = players[idHighlightOn])
         idCurrentPlayer++
     }
 
     private fun makeMove() {
         totalNumberOfMoves--
         highlightNextPlayer()
-        mainActivity!!.setTextViewHighlight(currentCell, true)
+        mainActivity.setTextViewHighlight(currentCell = currentCell, isHighlight = true)
     }
 
     private fun makeEdit(cell: Cell) {
-        if (currentCell!!.isEmpty) {
-            mainActivity!!.setTextViewHighlight(currentCell, false)
+        if (currentCell.isEmpty) {
+            mainActivity.setTextViewHighlight(currentCell = currentCell, isHighlight = false)
         } else {
-            mainActivity!!.setTextViewHighlight(currentCell, true)
+            mainActivity.setTextViewHighlight(currentCell = currentCell, isHighlight = true)
         }
-        if (cell.owner === currentPlayer) {
-            mainActivity!!.highlightPlayersMove(currentPlayer)
+        if (cell.owner == currentPlayer) {
+            mainActivity.highlightPlayersMove(player = currentPlayer)
         }
     }
 
     fun okButtonOnKeyboardActivityClicked(value: String, isEdit: Boolean) {
-        val player = currentCell!!.owner
-        val rowName = currentCell!!.row
-        player!!.setValue(rowName, value)
-        currentCell!!.value = value
+        val player = currentCell.owner
+        val rowName = currentCell.row
+        player.setValue(rowName = rowName, value = value)
+        currentCell.value = value
         refreshCellsList()
-        refreshFullSquarePokerTextViews(player)
+        refreshFullSquarePokerTextViews(player = player)
         if (isEdit) {
-            makeEdit(currentCell!!)
+            makeEdit(cell = currentCell)
         } else {
             makeMove()
         }
-        showSchool(player)
+        showSchool(player = player)
         if (isCountTotalEveryMove) {
-            showTotal(player)
+            showTotal(player = player)
         }
         if (isCountPlaceEveryMove) {
             showAllPlaces()
@@ -99,79 +98,79 @@ class Game private constructor() {
         }
     }
 
-    private fun refreshFullSquarePokerTextViews(player: Player?) {
-        if (player!!.isThreeClassesInSchoolAreFinished && !player.isSecondNonSchoolPartAdded) {
-            mainActivity!!.enableFullSquarePokerTextViews(player)
+    private fun refreshFullSquarePokerTextViews(player: Player) {
+        if (player.isThreeClassesInSchoolAreFinished && !player.isSecondNonSchoolPartAdded) {
+            mainActivity.enableFullSquarePokerTextViews(player = player)
         }
         if (!player.isThreeClassesInSchoolAreFinished && player.isSecondNonSchoolPartAdded) {
-            mainActivity!!.disableFullSquarePokerTextViews(player)
+            mainActivity.disableFullSquarePokerTextViews(player = player)
         }
     }
 
     fun setMainActivity(mainActivity: MainActivity) {
         this.mainActivity = mainActivity
-        mainActivity.fillMainTable(players, currentPlayer)
+        mainActivity.fillMainTable(players = players, player = currentPlayer)
     }
 
-    fun setCurrentCell(cell: Cell?) {
+    fun setCurrentCell(cell: Cell) {
         currentCell = cell
     }
 
-    private fun showSchool(player: Player?) {
-        mainActivity!!.showSchool(player)
+    private fun showSchool(player: Player) {
+        mainActivity.showSchool(player = player)
     }
 
-    private fun showTotal(player: Player?) {
-        mainActivity!!.showTotal(player)
+    private fun showTotal(player: Player) {
+        mainActivity.showTotal(player = player)
     }
 
     private fun showAllTotals() {
         for (player in players) {
-            showTotal(player)
+            showTotal(player = player)
         }
     }
 
     private fun showPlayerPlace(player: Player) {
-        mainActivity!!.showPlayerPlace(player)
+        mainActivity.showPlayerPlace(player = player)
     }
 
     private fun showAllPlaces() {
         calcPlaces()
         for (player in players) {
-            showPlayerPlace(player)
+            showPlayerPlace(player = player)
         }
     }
 
     // Работа с ListActivity
-    fun setListActivity(listActivity: ListActivity?) {
+    fun setListActivity(listActivity: ListActivity) {
         this.listActivity = listActivity
         fillListView()
     }
 
     private fun fillListView() {
-        listActivity!!.fillListView(players)
+        listActivity.fillListView(players = players)
     }
 
     fun addPlayer(nameOfPlayer: String) {
-        players.add(Player(nameOfPlayer))
-        listActivity!!.refreshListView(players)
+        players.add(Player(name = nameOfPlayer))
+        listActivity.refreshListView(players = players)
     }
 
     fun removePlayer(position: Int) {
         players.removeAt(position)
-        listActivity!!.refreshListView(players)
+        listActivity.refreshListView(players = players)
     }
 
     fun clearListOfPlayersAndRefreshListView() {
         clearListOfPlayers()
-        listActivity!!.refreshListView(players)
+        listActivity.refreshListView(players = players)
     }
 
-    fun clearListOfPlayers() {
+    private fun clearListOfPlayers() {
         players.clear()
     }
 
-    fun getNameOfPlayerByPosition(position: Int): String? {
+    fun getNameOfPlayerByPosition(position: Int): String {
         return players[position].name
     }
 

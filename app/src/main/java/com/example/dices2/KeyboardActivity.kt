@@ -30,14 +30,15 @@ class KeyboardActivity : AppCompatActivity() {
         isEdit = intent.getBooleanExtra(Consts.INTENT_IS_EDIT, false)
         isInSchool = intent.getBooleanExtra(Consts.INTENT_IS_IN_SCHOOL, false)
         if (isEdit) {
-            result = getIntent().getStringExtra(Consts.INTENT_EDITED_VALUE)
+            getIntent().getStringExtra(Consts.INTENT_EDITED_VALUE)?.let { result = it }
             binding.tvKeyboardResult.text = result
         }
-        enableButton(binding.bSave, isEdit)
-        enableButton(binding.bPlus, isInSchool)
+        enableButton(textView = binding.bSave, isEnabled = isEdit)
+        enableButton(textView = binding.bPlus, isEnabled = isInSchool)
     }
 
     private fun init() {
+        // TODO getColor deprecated
         enabledTextColor = resources.getColor(R.color.white)
         disabledTextColor = resources.getColor(R.color.colorBackgroundLight)
     }
@@ -49,12 +50,15 @@ class KeyboardActivity : AppCompatActivity() {
         val isFirstResultSymbolPlusOrMinus = result == "+" || result == "-"
         val isSymbolPlusOrMinus = symbol == "+" || symbol == "-"
         val isSymbolZero = symbol == "0"
+        // TODO disable to input school without first '+' or '-'
+        val isFirstSymbolInSchoolPlusOrMinus = (isInSchool && isResultEmpty && isSymbolPlusOrMinus) || isFirstResultSymbolPlusOrMinus
         if ((isResultEmpty && !isSymbolZero ||
                         isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus && !isSymbolZero ||
-                        !isResultEmpty && !isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus) && isCountKeyboardInputSymbolsLessThanThree) {
+                        !isResultEmpty && !isFirstResultSymbolPlusOrMinus && !isSymbolPlusOrMinus)
+                && isCountKeyboardInputSymbolsLessThanThree) {
             result += symbol
             binding.tvKeyboardResult.text = result
-            enableButton(binding.bSave, true)
+            enableButton(textView = binding.bSave, isEnabled = true)
         }
     }
 
@@ -64,7 +68,7 @@ class KeyboardActivity : AppCompatActivity() {
             binding.tvKeyboardResult.text = result
         }
         if (result == "" && !isEdit) {
-            enableButton(binding.bSave, false)
+            enableButton(textView = binding.bSave, isEnabled = false)
         }
     }
 
@@ -80,8 +84,8 @@ class KeyboardActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun enableButton(textView: TextView?, isEnabled: Boolean) {
-        textView!!.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+    private fun enableButton(textView: TextView, isEnabled: Boolean) {
+        textView.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
         textView.isEnabled = isEnabled
     }
 }

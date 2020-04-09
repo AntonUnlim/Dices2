@@ -17,4 +17,16 @@
     <string name="count_place_every_move">Считать Место после каждого хода</string>
     <string name="count_total_every_move">Считать Итого после каждого хода</string>
     <string name="keep_screen_on">Не выключать экран во время игры</string>
+    <string name="not_enough_players">Для начала игры надо миниум два игрока</string>
+    <string name="clear_list">Очистить список</string>
+    <string name="are_you_sure_to_clear_list">Вы уверены, что хотите очистить список игроков?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="duplicate_plaers_error">Имена игроков не могут повторяться!</string>
+    <string name="are_you_sure_to_delete_player">\"Вы уверены, что хотите удалить \"</string>
+    <string name="delete">Удаление</string>
+    <string name="break_game">Прервать игру</string>
+    <string name="are_you_sure_to_break_game">Вы уверены, что хотите прервать текущую игру?</string>
+    <string name="exit">Выход</string>
+    <string name="are_you_sure_to_exit">Вы уверены, что хотите выйти?</string>
 </resources>

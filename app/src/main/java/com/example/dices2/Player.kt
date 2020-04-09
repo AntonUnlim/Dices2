@@ -3,7 +3,7 @@ package com.example.dices2
 import java.util.*
 
 class Player(val name: String) : Comparable<Player> {
-    private val values: MutableMap<RowName?, Int>
+    private val values: MutableMap<RowName, Int>
     var isSecondNonSchoolPartAdded = false
     var curPlace = 0
 
@@ -59,15 +59,15 @@ class Player(val name: String) : Comparable<Player> {
             return count >= 3
         }
 
-    fun getValue(rowName: RowName?): Int {
-        return values[rowName]!!
+    fun getValue(rowName: RowName): Int {
+        return values[rowName]?:0
     }
 
-    fun setValue(rowName: RowName?, value: String) {
+    fun setValue(rowName: RowName, value: String) {
         if (value == "") {
             values.remove(rowName)
         } else {
-            values[rowName] = getIntValueFromString(value)
+            values[rowName] = getIntValueFromString(value = value)
         }
     }
 

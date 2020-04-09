@@ -18,48 +18,46 @@ import java.util.*
 class ListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListBinding
-
-    private var game: Game? = null
-    private var stringArrayAdapter: ArrayAdapter<String?>? = null
+    private var game = Game.instance
+    private lateinit var stringArrayAdapter: ArrayAdapter<String?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
-        game = Game.instance
-        game!!.setListActivity(this)
+        game.setListActivity(this)
     }
 
     fun fillListView(players: List<Player>) {
         stringArrayAdapter = ArrayAdapter(this,
-                R.layout.my_simple_list_item, playersToString(players))
+                R.layout.my_simple_list_item, playersToString(players = players))
         binding.lvPlayers.adapter = stringArrayAdapter
-        binding.lvPlayers.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+        binding.lvPlayers.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             val alertDialogBuilder = AlertDialog.Builder(this@ListActivity)
-            alertDialogBuilder.setTitle("Удаление")
-            alertDialogBuilder.setMessage("Вы уверены, что хотите удалить " + game!!.getNameOfPlayerByPosition(position) + "?")
-            alertDialogBuilder.setNegativeButton("Нет", null)
-            alertDialogBuilder.setPositiveButton("Да") { dialog, which -> game!!.removePlayer(position) }
+            alertDialogBuilder.setTitle(getString(R.string.delete))
+            alertDialogBuilder.setMessage("${getString(R.string.are_you_sure_to_delete_player)} ${game.getNameOfPlayerByPosition(position)}?")
+            alertDialogBuilder.setNegativeButton(getString(R.string.no), null)
+            alertDialogBuilder.setPositiveButton(getString(R.string.yes)) { _, _ -> game.removePlayer(position) }
             alertDialogBuilder.show()
         }
     }
 
     fun refreshListView(players: List<Player>) {
-        stringArrayAdapter!!.clear()
-        stringArrayAdapter!!.addAll(playersToString(players))
-        stringArrayAdapter!!.notifyDataSetChanged()
+        stringArrayAdapter.clear()
+        stringArrayAdapter.addAll(playersToString(players = players))
+        stringArrayAdapter.notifyDataSetChanged()
     }
 
     fun addButtonClicked(view: View?) {
         val playerName = binding.etPlayerName.text.toString()
-        if (game!!.isDuplicatePlayer(playerName)) {
-            showToast("Имена игроков не могут повторяться!")
+        if (game.isDuplicatePlayer(name = playerName)) {
+            showToast(message = getString(R.string.duplicate_plaers_error))
         } else {
             if (playerName == "") {
-                showToast(getString(R.string.name_cannot_be_empty))
+                showToast(message = getString(R.string.name_cannot_be_empty))
             } else {
-                game!!.addPlayer(playerName)
+                game.addPlayer(nameOfPlayer = playerName)
                 binding.etPlayerName.setText("")
             }
         }
@@ -67,18 +65,18 @@ class ListActivity : AppCompatActivity() {
 
     fun clearButtonClicked(view: View?) {
         val alertDialogBuilder = AlertDialog.Builder(this@ListActivity)
-        alertDialogBuilder.setTitle("Очистить список")
-        alertDialogBuilder.setMessage("Вы уверены, что хотите очистить список игроков?")
-        alertDialogBuilder.setNegativeButton("Нет", null)
-        alertDialogBuilder.setPositiveButton("Да") { dialog, which -> game!!.clearListOfPlayersAndRefreshListView() }
+        alertDialogBuilder.setTitle(getString(R.string.clear_list))
+        alertDialogBuilder.setMessage(getString(R.string.are_you_sure_to_clear_list))
+        alertDialogBuilder.setNegativeButton(getString(R.string.no), null)
+        alertDialogBuilder.setPositiveButton(getString(R.string.yes)) { _, _ -> game.clearListOfPlayersAndRefreshListView() }
         alertDialogBuilder.show()
     }
 
     fun startGameButtonClicked(view: View?) {
         if (binding.lvPlayers.adapter.count < 2) {
-            showToast("Для начала игры надо миниум два игрока")
+            showToast(message = getString(R.string.not_enough_players))
         } else {
-            game!!.startGameButtonClicked()
+            game.startGameButtonClicked()
             finish()
         }
     }
@@ -87,8 +85,8 @@ class ListActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun playersToString(players: List<Player>): List<String?> {
-        val result: MutableList<String?> = ArrayList()
+    private fun playersToString(players: List<Player>): List<String> {
+        val result: MutableList<String> = ArrayList()
         for (player in players) {
             result.add(player.name)
         }
@@ -97,6 +95,7 @@ class ListActivity : AppCompatActivity() {
 
     private fun init() {
         // set white color to underline
+        // TODO setColorFilter deprecated
         binding.etPlayerName.background.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
     }
 
