@@ -35,6 +35,11 @@ class KeyboardActivity : AppCompatActivity() {
         }
         enableButton(textView = binding.bSave, isEnabled = isEdit)
         enableButton(textView = binding.bPlus, isEnabled = isInSchool)
+        if (isInSchool) {
+            enableDigitButtons(isEnabled = false)
+        } else {
+            enableDigitButtons(isEnabled = true)
+        }
     }
 
     private fun init() {
@@ -59,6 +64,7 @@ class KeyboardActivity : AppCompatActivity() {
             result += symbol
             binding.tvKeyboardResult.text = result
             enableButton(textView = binding.bSave, isEnabled = true)
+            enableDigitButtons(isEnabled = true)
         }
     }
 
@@ -69,6 +75,9 @@ class KeyboardActivity : AppCompatActivity() {
         }
         if (result == "" && !isEdit) {
             enableButton(textView = binding.bSave, isEnabled = false)
+            if (isInSchool) {
+                enableDigitButtons(isEnabled = false)
+            }
         }
     }
 
@@ -87,5 +96,28 @@ class KeyboardActivity : AppCompatActivity() {
     private fun enableButton(textView: TextView, isEnabled: Boolean) {
         textView.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
         textView.isEnabled = isEnabled
+    }
+
+    private fun enableDigitButtons(isEnabled: Boolean) {
+        binding.b0.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b1.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b2.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b3.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b4.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b5.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b6.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b7.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b8.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b9.setTextColor(if (isEnabled) enabledTextColor else disabledTextColor)
+        binding.b0.isEnabled = isEnabled
+        binding.b1.isEnabled = isEnabled
+        binding.b2.isEnabled = isEnabled
+        binding.b3.isEnabled = isEnabled
+        binding.b4.isEnabled = isEnabled
+        binding.b5.isEnabled = isEnabled
+        binding.b6.isEnabled = isEnabled
+        binding.b7.isEnabled = isEnabled
+        binding.b8.isEnabled = isEnabled
+        binding.b9.isEnabled = isEnabled
     }
 }

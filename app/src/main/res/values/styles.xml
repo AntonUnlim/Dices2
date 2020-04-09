@@ -15,7 +15,8 @@
         <item name="android:gravity">center</item>
         <item name="android:onClick">onKeyboardButtonClicked</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/text_view_back_transparent</item>
+        <item name="android:background">@drawable/selectors</item>
+        <item name="android:clickable">true</item>
     </style>
     <style name="KeyboardButtonCancel">
         <item name="android:layout_width">0dp</item>
@@ -24,7 +25,8 @@
         <item name="android:gravity">center</item>
         <item name="android:onClick">onKeyboardButtonClicked</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/text_view_back_transparent</item>
+        <item name="android:background">@drawable/selectors</item>
+        <item name="android:clickable">true</item>
     </style>
 
 

@@ -10,7 +10,7 @@
     <color name="green">#6CAF60</color>
     <color name="greenLight">#4B5E47</color>
     <color name="black">#000000</color>
-    <color name="highlightCurrentMove">#CDDC39</color>
+    <color name="highlightCurrentMove">#DC9339</color>
     <color name="transparent">#00000000</color>
     <color name="border">#747474</color>
     <color name="yes">#1E5015</color>
