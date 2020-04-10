@@ -4,13 +4,14 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import java.util.*
 
-class GameTable(private val mainActivity: MainActivity, private val mainTable: TableLayout) {
+class GameTable(private val mainActivity: MainActivity, private val mainConstraintLayout: ConstraintLayout) {
     private val SCHOOL_ROWS = arrayOf(RowName.ONE, RowName.TWO, RowName.THREE, RowName.FOUR, RowName.FIVE, RowName.SIX)
     private val FIRST_NON_SCHOOL_PART_ROWS = arrayOf(RowName.PAIR, RowName.TWO_PLUS_TWO, RowName.TRIANGLE, RowName.SMALL, RowName.BIG)
     private val FULL_SQUARE_POKER_ROWS = arrayOf(RowName.FULL, RowName.SQUARE, RowName.POKER)
@@ -30,6 +31,10 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private val LEFT_RIGHT_TEXTVIEW_PADDING = 16
     private val playersNamesTextViews: MutableMap<Player, TextView>
     private val placeTextViewsMap: MutableMap<Player, Cell>
+    private lateinit var schoolPartTableLayout: TableLayout
+    private lateinit var firstPartTableLayout: TableLayout
+    private lateinit var secondPartTableLayout: TableLayout
+    private lateinit var totalPartTableLayout: TableLayout
 
     init {
         // TODO getDrawable() is deprecated
@@ -46,20 +51,45 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         playersFullSquarePokerCellsMap = HashMap()
     }
 
+    private fun generateTables() {
+        schoolPartTableLayout = createTableLayout(numberOfRows = 8)
+        firstPartTableLayout = createTableLayout(numberOfRows = 5)
+        secondPartTableLayout = createTableLayout(numberOfRows = 5)
+        totalPartTableLayout = createTableLayout(numberOfRows = 2)
+        val separatorView1 = createSeparatorView()
+        val separatorView2 = createSeparatorView()
+        val separatorView3 = createSeparatorView()
+
+        addConstraint(schoolPartTableLayout, ConstraintType.TOP, mainConstraintLayout, ConstraintType.TOP)
+        addConstraint(schoolPartTableLayout, ConstraintType.BOTTOM, separatorView1, ConstraintType.TOP)
+        addConstraint(separatorView1, ConstraintType.TOP, schoolPartTableLayout, ConstraintType.BOTTOM)
+        addConstraint(separatorView1, ConstraintType.BOTTOM, firstPartTableLayout, ConstraintType.TOP)
+        addConstraint(firstPartTableLayout, ConstraintType.TOP, separatorView1, ConstraintType.BOTTOM)
+        addConstraint(firstPartTableLayout, ConstraintType.BOTTOM, separatorView2, ConstraintType.TOP)
+        addConstraint(separatorView2, ConstraintType.TOP, firstPartTableLayout, ConstraintType.BOTTOM)
+        addConstraint(separatorView2, ConstraintType.BOTTOM, secondPartTableLayout, ConstraintType.TOP)
+        addConstraint(secondPartTableLayout, ConstraintType.TOP, separatorView2, ConstraintType.BOTTOM)
+        addConstraint(secondPartTableLayout, ConstraintType.BOTTOM, separatorView3, ConstraintType.TOP)
+        addConstraint(separatorView3, ConstraintType.TOP, secondPartTableLayout, ConstraintType.BOTTOM)
+        addConstraint(separatorView3, ConstraintType.BOTTOM, totalPartTableLayout, ConstraintType.TOP)
+        addConstraint(totalPartTableLayout, ConstraintType.TOP, separatorView3, ConstraintType.BOTTOM)
+        addConstraint(totalPartTableLayout, ConstraintType.BOTTOM, mainConstraintLayout, ConstraintType.BOTTOM)
+    }
+
     fun fillTable(players: List<Player>, player: Player?) {
         this.players = players
-        mainTable.removeAllViews()
+        generateTables()
+        schoolPartTableLayout.removeAllViews()
+        firstPartTableLayout.removeAllViews()
+        secondPartTableLayout.removeAllViews()
+        totalPartTableLayout.removeAllViews()
         Consts.allCells.clear()
         fillNamesRow()
-        //addSeparatorRow();
         fillSchoolRows()
         fillSchoolTotalRow()
-        //addSeparatorRow();
         fillFirstNonSchoolPart()
-        //addSeparatorRow();
         fillSecondNonSchoolPart()
         fillChances()
-        //addSeparatorRow();
         fillTotalRows()
         fillPlaceRow()
         fillSavedValues()
@@ -97,7 +127,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             playersNamesTextViews[player] = textView
             tableRow.addView(textView)
         }
-        mainTable.addView(tableRow)
+        schoolPartTableLayout.addView(tableRow)
     }
 
     private fun fillSchoolRows() {
@@ -107,7 +137,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             textView.text = rowName.getName()
             tableRow.addView(textView)
             fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
-            mainTable.addView(tableRow)
+            schoolPartTableLayout.addView(tableRow)
         }
     }
 
@@ -122,19 +152,15 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             schoolTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable.addView(tableRow)
+        schoolPartTableLayout.addView(tableRow)
     }
 
-    private fun addSeparatorRow() {
+    private fun createTableRow(): TableRow {
         val tableRow = TableRow(mainActivity)
-        val layoutParams = TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.5f)
+        val layoutParams = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 0, 200f)
         tableRow.layoutParams = layoutParams
-        tableRow.addView(createNameOfRowTextView())
-        for (player in players) {
-            val textView = createNameOfPlayerTextView()
-            tableRow.addView(textView)
-        }
-        mainTable.addView(tableRow)
+        tableRow.background = backgroundDarkGray
+        return tableRow
     }
 
     private fun fillFirstNonSchoolPart() {
@@ -144,7 +170,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             textView.text = rowName.getName()
             tableRow.addView(textView)
             fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
-            mainTable.addView(tableRow)
+            firstPartTableLayout.addView(tableRow)
         }
     }
 
@@ -155,7 +181,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             textView.text = rowName.getName()
             tableRow.addView(textView)
             fillRowWithNonClickableCells(tableRow = tableRow, rowName = rowName)
-            mainTable.addView(tableRow)
+            secondPartTableLayout.addView(tableRow)
         }
     }
 
@@ -166,7 +192,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             textView.text = rowName.getName()
             tableRow.addView(textView)
             fillRowWithClickableCells(tableRow = tableRow, rowName = rowName)
-            mainTable.addView(tableRow)
+            secondPartTableLayout.addView(tableRow)
         }
     }
 
@@ -181,7 +207,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             totalTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable.addView(tableRow)
+        totalPartTableLayout.addView(tableRow)
     }
 
     private fun fillPlaceRow() {
@@ -195,13 +221,13 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
             placeTextViewsMap[player] = cell
             Consts.allCells.add(cell)
         }
-        mainTable.addView(placeTableRow)
+        totalPartTableLayout.addView(placeTableRow)
     }
 
     private fun fillRowWithClickableCells(tableRow: TableRow, rowName: RowName) {
         for (player in players) {
             val cell = Cell(mainActivity, player, rowName)
-            cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+            cell.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f)
             cell.gravity = Gravity.CENTER
             cell.background = backgroundDarkGray
             cell.setOnClickListener(createOnClickListener())
@@ -217,7 +243,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
     private fun fillRowWithNonClickableCells(tableRow: TableRow, rowName: RowName) {
         for (player in players) {
             val cell = Cell(context = mainActivity, owner = player, row = rowName)
-            cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+            cell.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f)
             cell.gravity = Gravity.CENTER
             cell.background = backgroundDarkGray
             setMutualParams(textView = cell)
@@ -244,17 +270,9 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
         }
     }
 
-    private fun createTableRow(): TableRow {
-        val tableRow = TableRow(mainActivity)
-        val layoutParams = TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f)
-        tableRow.layoutParams = layoutParams
-        tableRow.background = backgroundDarkGray
-        return tableRow
-    }
-
     private fun createNameOfRowTextView(): TextView {
         val textView = TextView(mainActivity)
-        textView.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        textView.layoutParams = TableRow.LayoutParams(170, TableRow.LayoutParams.MATCH_PARENT)
         textView.gravity = Gravity.CENTER_VERTICAL
         textView.setPadding(LEFT_RIGHT_TEXTVIEW_PADDING, 0, LEFT_RIGHT_TEXTVIEW_PADDING, 0)
         setMutualParams(textView = textView)
@@ -263,7 +281,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
 
     private fun createNameOfPlayerTextView(): TextView {
         val textView = TextView(mainActivity)
-        textView.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+        textView.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f)
         textView.gravity = Gravity.CENTER
         textView.background = backgroundDarkGray
         setMutualParams(textView = textView)
@@ -272,7 +290,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
 
     private fun createNonClickableCell(player: Player, rowName: RowName): Cell {
         val cell = Cell(mainActivity, player, rowName)
-        cell.layoutParams = TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+        cell.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f)
         cell.gravity = Gravity.CENTER
         cell.background = backgroundDarkGray
         setMutualParams(textView = cell)
@@ -394,5 +412,50 @@ class GameTable(private val mainActivity: MainActivity, private val mainTable: T
 
     fun setPlayerPlace(player: Player) {
         placeTextViewsMap[player]?.value = player.curPlace.toString()
+    }
+
+    private fun createSeparatorView(): View {
+        val view = View(mainActivity)
+        view.id = View.generateViewId()
+        view.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 15)
+        mainConstraintLayout.addView(view)
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(mainConstraintLayout)
+        constraintSet.connect(view.id, ConstraintSet.START, R.id.mainConstraintLayout, ConstraintSet.START)
+        constraintSet.connect(view.id, ConstraintSet.END, R.id.mainConstraintLayout, ConstraintSet.END)
+        constraintSet.applyTo(mainConstraintLayout)
+        return view
+    }
+
+    private fun addConstraint(view: View, type: ConstraintType, constrainToView: View, constrainToType: ConstraintType) {
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(mainConstraintLayout)
+        constraintSet.connect(
+                view.id,
+                when(type) {
+                    ConstraintType.TOP -> ConstraintSet.TOP
+                    ConstraintType.BOTTOM -> ConstraintSet.BOTTOM
+                },
+                constrainToView.id,
+                when(constrainToType) {
+                    ConstraintType.TOP -> ConstraintSet.TOP
+                    ConstraintType.BOTTOM -> ConstraintSet.BOTTOM
+                })
+        constraintSet.applyTo(mainConstraintLayout)
+    }
+
+    private fun createTableLayout(numberOfRows: Int): TableLayout {
+        val parentId = R.id.mainConstraintLayout
+        val table = TableLayout(mainActivity)
+        table.id = View.generateViewId()
+        table.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 0)
+        mainConstraintLayout.addView(table)
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(mainConstraintLayout)
+        constraintSet.setVerticalWeight(table.id, numberOfRows.toFloat())
+        constraintSet.connect(table.id, ConstraintSet.START, parentId, ConstraintSet.START)
+        constraintSet.connect(table.id, ConstraintSet.END, parentId, ConstraintSet.END)
+        constraintSet.applyTo(mainConstraintLayout)
+        return table
     }
 }

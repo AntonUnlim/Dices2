@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun fillMainTable(players: List<Player>, player: Player?) {
-        gameTable = GameTable(mainActivity = this, mainTable = binding.tlMain)
+        gameTable = GameTable(mainActivity = this, mainConstraintLayout = binding.mainConstraintLayout)
         gameTable.fillTable(players = players, player = player)
     }
 
