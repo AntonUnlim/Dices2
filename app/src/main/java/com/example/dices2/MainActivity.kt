@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dices2.databinding.ActivityMainBinding
@@ -50,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 }
             }
-
             if (pref.contains(Consts.APP_PREFERENCES_PLAYERS)) {
                 game.fillStartPlayers(playersSet = pref.getStringSet(Consts.APP_PREFERENCES_PLAYERS, HashSet<String>()))
             }

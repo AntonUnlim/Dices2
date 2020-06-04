@@ -25,4 +25,5 @@ object Consts {
     const val APP_PREFERENCES_PLACE = "place"
     const val APP_PREFERENCES_SCREEN = "screen"
     const val APP_PREFERENCES_PLAYERS = "players"
+    const val APP_PREFERENCES_IS_SECOND_NON_SCHOOL_PART_ADDED = "isSecondNonSchoolPartAdded"
 }

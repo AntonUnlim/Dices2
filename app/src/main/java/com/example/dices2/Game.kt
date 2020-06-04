@@ -1,6 +1,8 @@
 package com.example.dices2
 
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
 class Game private constructor() {
@@ -255,6 +257,10 @@ class Game private constructor() {
         if (players.size > 0) {
             startGame()
         }
+    }
+
+    fun setSecondNonSchoolPartAdded(boolean: Boolean) {
+        currentPlayer?.isSecondNonSchoolPartAdded = boolean
     }
 
     private object HOLDER {

@@ -180,7 +180,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainConstrai
             val textView = createNameOfRowTextView()
             textView.text = rowName.getName()
             tableRow.addView(textView)
-            fillRowWithNonClickableCells(tableRow = tableRow, rowName = rowName)
+            fillSecondNonSchoolPartCells(tableRow = tableRow, rowName = rowName)
             secondPartTableLayout.addView(tableRow)
         }
     }
@@ -240,7 +240,7 @@ class GameTable(private val mainActivity: MainActivity, private val mainConstrai
         }
     }
 
-    private fun fillRowWithNonClickableCells(tableRow: TableRow, rowName: RowName) {
+    private fun fillSecondNonSchoolPartCells(tableRow: TableRow, rowName: RowName) {
         for (player in players) {
             val cell = Cell(context = mainActivity, owner = player, row = rowName)
             cell.layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f)
@@ -250,6 +250,10 @@ class GameTable(private val mainActivity: MainActivity, private val mainConstrai
             //mainActivity.registerForContextMenu(cell)
             tableRow.addView(cell)
             Consts.allCells.add(cell)
+            if (player.isThreeClassesInSchoolAreFinished) {
+                fillPlayersCellsMap(player = player, cell = cell)
+                cell.setOnLongClickListener(createOnLongClickListener())
+            }
             if (playersFullSquarePokerCellsMap[player] == null) {
                 val cells: MutableList<Cell> = ArrayList()
                 cells.add(cell)
